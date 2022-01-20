@@ -147,8 +147,14 @@ int main (int argc, char *argv[])
       Particles_Restart(&data, cmd_line.nrestart, grd);
     }
     #endif
+    #if NBODY_SYS == YES
+    nbodyReadRestartFile(&runtime, cmd_line.nrestart);
+    #endif /* NBODY_SYS */
   }else if (cmd_line.h5restart == YES){
     RestartFromFile (&data, &runtime, cmd_line.nrestart, DBL_H5_OUTPUT, grd);
+    #if NBODY_SYS == YES
+    nbodyReadRestartFile(&runtime, cmd_line.nrestart);
+    #endif
   }else if (cmd_line.write){
     CheckForOutput   (&data, &runtime, tbeg, grd);
     CheckForAnalysis (&data, &runtime, grd);
@@ -804,7 +810,12 @@ void CheckForOutput (Data *d, Runtime *runtime, time_t t0, Grid *grid)
         Particles_WriteData(d, output, grid);
       } else
       #endif
-      WriteData(d, output, grid);  
+      WriteData(d, output, grid);
+
+      #if NBODY_SYS == YES
+      nbodyWriteRestartFile(output);
+      nbodyWriteOrbitalElementsAtOutputTime(output);
+      #endif 
 
     /* ----------------------------------------------------------
         save the file number of the dbl and dbl.h5 output format
@@ -850,6 +861,14 @@ void CheckForAnalysis (Data *d, Runtime *runtime, Grid *grid)
   check_dn = (g_stepNumber%runtime->anl_dn) == 0;
   check_dn = check_dn && (runtime->anl_dn > 0);
 
-  if (check_dt || check_dn) Analysis (d, grid);
+  if (check_dt || check_dn) 
+  {
+    Analysis (d, grid);
+    #if NBODY_SYS == YES
+    nbodyWriteCoordinates();
+    nbodyWriteOrbitalElements();
+    nbodyWriteCOM();
+    #endif
+  }
 }
 

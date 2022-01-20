@@ -120,6 +120,9 @@ double g_smallPressure = 1.e-12; /**< Small value for pressure fix. */
  double g_isoSoundSpeed = 1.0; /* g_isoSoundSpeed */
 #endif
 
+
+double g_mplan, g_mstar, g_mu, g_nu;
+
 #if RADIATION
  double g_absorptionCoeff = 0.0;	//Absorption coefficient (code_length^2/code_energy)
  double g_scatteringCoeff = 0.0;	//Scattering coefficient (code_length^2/code_energy)
@@ -180,4 +183,8 @@ double g_inputParam[32]; /**< Array containing the user-defined parameters.
   MPI_Datatype MPI_PARTICLE;
   MPI_Datatype PartOutputType;
  #endif
-#endif	
+#endif
+
+#if NBODY_SYS == YES
+  Nbody_System g_nb;
+#endif  

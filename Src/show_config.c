@@ -365,5 +365,25 @@ void CheckConfig()
   #endif
 
 #endif
-   
+#if NBODY_SYS == YES
+    #if TIME_STEPPING != RK2
+    print ("! The nbody integrator works only with the RK2 time stepping\n");
+    QUIT_PLUTO(1);
+    #endif
+
+    #if GEOMETRY == CARTESIAN || GEOMETRY == CYLINDRYCAL
+    print ("! The nbody integrator works only with 2D polar or 3D spherical coordinates\n");
+    QUIT_PLUTO(1);
+    #endif
+
+    #if GEOMETRY == POLAR && DIMENSIONS != 2
+    print ("! The nbody integrator works only with 2D polar coordinates\n");
+    QUIT_PLUTO(1)
+    #endif
+
+    #if GEOMETRY == SPHERICAL && DIMENSIONS != 3
+    print ("! The nbody integrator works only with 3D spherical coordinates\n");
+    QUIT_PLUTO(1)
+    #endif
+#endif 
 }

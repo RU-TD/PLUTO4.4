@@ -273,6 +273,13 @@
 #define MC_LIM            27
 #define FOURTH_ORDER_LIM  28
 
+/* ---- nbody labels ---- */
+#define STAR   1
+#define BINARY 2
+
+#define CART   1
+#define ORBIT  2
+
 /*! \name Physical constants in c.g.s units.
      The following set of macros express some useful physical constants
      in c.g.s units (erg, cm and sec). Values have been taken from
@@ -495,6 +502,22 @@
 
 #ifndef WARNING_MESSAGES
  #define WARNING_MESSAGES    YES
+#endif
+
+#if NBODY_SYS == YES
+ #ifndef G_SMOOTHING
+   #define G_SMOOTHING 0.6
+ #endif
+ /* Set number of planets + central object */
+ #define NB_N (CENTRAL_OBJECT+NO_OF_PLANETS)
+ /* set gravitational constant in code units */
+ #if DIMENSIONS == 1
+ #error Nbody with 1D not supported
+ #elif DIMENSIONS == 2
+    #define CONST_G_CODE_UNITS (CONST_G*UNIT_DENSITY*UNIT_LENGTH/UNIT_VELOCITY/UNIT_VELOCITY)
+ #elif DIMENSIONS == 3
+    #define CONST_G_CODE_UNITS (CONST_G*UNIT_DENSITY*UNIT_LENGTH*UNIT_LENGTH/UNIT_VELOCITY/UNIT_VELOCITY)
+ #endif
 #endif
 
 /* ********************************************************
@@ -779,6 +802,10 @@ typedef double ****Data_Arr;
 #endif
 #include "Math_Tools/math_tools.h"  /* Math tools header file */
 
+#if NBODY_SYS == YES
+ #include "Nbody/nbody.h"           /* Nbody header file */
+#endif
+
 /* ********************************************************
     Define IF_XXXX() Macros for simpler coding
    ******************************************************** */
@@ -871,7 +898,7 @@ extern double g_maxMach;
 #endif
 
 extern double g_domBeg[3], g_domEnd[3];
-
+extern double g_mplan, g_mstar, g_mu, g_nu;
 extern double g_inputParam[32];
 #if EOS == IDEAL
  extern double g_gamma;
@@ -885,6 +912,10 @@ extern double g_inputParam[32];
  extern double g_radiationConst;
  extern double g_idealGasConst;
  extern double g_totalOpacity;
+#endif
+
+#if NBODY_SYS == YES
+  extern Nbody_System g_nb;
 #endif
 
 #ifdef CHOMBO

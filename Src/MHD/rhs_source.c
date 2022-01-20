@@ -278,6 +278,12 @@ void RightHandSideSource (const Sweep *sweep, timeStep *Dts,
                 rhs[i][ENG] -= phi_c*rhs[i][RHO];)
       #endif
 
+      #if NBODY_SYS == YES
+      double cell_acc = nbodyCalcCellAcceleration(vg, x1[i], x2[j], x3[k], IDIR);
+      rhs[i][MX1] += dt*vg[RHO]*cell_acc;
+      IF_ENERGY(rhs[i][ENG] += dt*0.5*(flux[i][RHO] + flux[i-1][RHO])*cell_acc);
+      #endif
+
     }
 
   } else if (g_dir == JDIR){
@@ -355,6 +361,12 @@ void RightHandSideSource (const Sweep *sweep, timeStep *Dts,
       IF_ENERGY(phi_c        = BodyForcePotential(x1[i], x2[j], x3[k]); 
                 rhs[j][ENG] -= phi_c*rhs[j][RHO];)
       #endif
+
+      #if NBODY_SYS == YES
+      double cell_acc = nbodyCalcCellAcceleration(vg, x1[i], x2[j], x3[k], JDIR);
+      rhs[j][MX2] += dt*vg[RHO]*cell_acc;
+      IF_ENERGY(rhs[j][ENG] += dt*0.5*(flux[j][RHO] + flux[j-1][RHO])*cell_acc);
+      #endif
     }
 
   }else if (g_dir == KDIR){
@@ -401,6 +413,12 @@ void RightHandSideSource (const Sweep *sweep, timeStep *Dts,
       IF_DUST_FLUID(rhs[k][MX3_D] -= dtdx*vg[RHO_D]*(phi_p[k] - phi_p[k-1]);)
       IF_ENERGY(phi_c        = BodyForcePotential(x1[i], x2[j], x3[k]);
                 rhs[k][ENG] -= phi_c*rhs[k][RHO];)
+      #endif
+
+      #if NBODY_SYS == YES
+      double cell_acc = nbodyCalcCellAcceleration(vg, x1[i], x2[j], x3[k], KDIR);
+      rhs[k][MX3] += dt*vg[RHO]*cell_acc;
+      IF_ENERGY(rhs[k][ENG] += dt*0.5*(flux[k][RHO] + flux[k-1][RHO])*cell_acc);
       #endif
     }
   }

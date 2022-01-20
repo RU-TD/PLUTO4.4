@@ -528,6 +528,13 @@ void Initialize(Data *data, Runtime *runtime, Grid *grid, cmdLine *cmd_line)
   MakePV_TemperatureTable();
 #endif
 
+/* ------------------------------------------------------------
+   8b. Initialize nbody system  
+   ------------------------------------------------------------ */
+  #if NBODY_SYS == YES 
+  nbodyInitialize();
+  #endif
+
 /* ----------------------------------------------
    9. Assign initial cond. for fluid & particles.
       We also compute the average orbital velocity
