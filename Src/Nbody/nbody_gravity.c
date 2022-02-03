@@ -12,13 +12,13 @@ void nbodyCalcIndirectTerm()
     for (l = 0; l < CENTRAL_OBJECT; l++)
     {
         DIM_EXPAND(g_nb.ax_indirect += g_nb.m[l]*g_nb.ax[l];,
-               g_nb.ay_indirect += g_nb.m[l]*g_nb.ay[l];,
-               g_nb.az_indirect += g_nb.m[l]*g_nb.az[l];)
+                   g_nb.ay_indirect += g_nb.m[l]*g_nb.ay[l];,
+                   g_nb.az_indirect += g_nb.m[l]*g_nb.az[l];)
     }
 
     DIM_EXPAND(g_nb.ax_indirect *= inv_m;,
-           g_nb.ay_indirect *= inv_m;,
-           g_nb.az_indirect *= inv_m;)
+               g_nb.ay_indirect *= inv_m;,
+               g_nb.az_indirect *= inv_m;)
 }
 
 /* Calculate acceleration of each body due to all other bodies */
@@ -26,18 +26,17 @@ void nbodyCalcAccelerations()
 {
     /* Resets all accelerations to zero */
     DIM_EXPAND(g_nb.ax = memset(g_nb.ax, 0.0, NB_N*sizeof(double));,
-           g_nb.ay = memset(g_nb.ay, 0.0, NB_N*sizeof(double));,
-           g_nb.az = memset(g_nb.az, 0.0, NB_N*sizeof(double));)
+               g_nb.ay = memset(g_nb.ay, 0.0, NB_N*sizeof(double));,
+               g_nb.az = memset(g_nb.az, 0.0, NB_N*sizeof(double));)
 
-        int i,j;
+    int i,j;
 	for (i = 0; i < NB_N; i++)
 	{
 		for (j = i+1; j < NB_N; j++)
 		{
             DIM_EXPAND(double dx = g_nb.x[i] - g_nb.x[j];,
-			       double dy = g_nb.y[i] - g_nb.y[j];,
-			       double dz = g_nb.z[i] - g_nb.z[j];)
-
+			           double dy = g_nb.y[i] - g_nb.y[j];,
+			           double dz = g_nb.z[i] - g_nb.z[j];)
 
             double r3 = DIM_EXPAND(dx*dx, +dy*dy, +dz*dz);
             r3 *= sqrt(r3);
@@ -46,11 +45,11 @@ void nbodyCalcAccelerations()
 			double acc_mag_j = CONST_G_CODE_UNITS*g_nb.m[i] / r3;
 
             DIM_EXPAND(g_nb.ax[i] += -acc_mag_i * dx;
-                   g_nb.ax[j] +=  acc_mag_j * dx;, 
-                   g_nb.ay[i] += -acc_mag_i * dy;
-                   g_nb.ay[j] +=  acc_mag_j * dy;,
-                   g_nb.az[i] += -acc_mag_i * dz;
-                   g_nb.az[j] +=  acc_mag_j * dz;)
+                       g_nb.ax[j] +=  acc_mag_j * dx;, 
+                       g_nb.ay[i] += -acc_mag_i * dy;
+                       g_nb.ay[j] +=  acc_mag_j * dy;,
+                       g_nb.az[i] += -acc_mag_i * dz;
+                       g_nb.az[j] +=  acc_mag_j * dz;)
 		}
 	}
 
@@ -59,8 +58,8 @@ void nbodyCalcAccelerations()
     {
         /* Disk feedback */
         DIM_EXPAND(g_nb.ax[l] += g_nb.axdisk[l];,
-               g_nb.ay[l] += g_nb.aydisk[l];,
-               g_nb.az[l] += g_nb.azdisk[l];)
+                   g_nb.ay[l] += g_nb.aydisk[l];,
+                   g_nb.az[l] += g_nb.azdisk[l];)
     }
 }
 
@@ -109,10 +108,7 @@ void nbodyCalcDiskFeedback(const Data *d, Grid *grid)
                         double r = x1[i];
                         #endif
 
-                        //double dV = grid[IDIR].dV[i] 
-                        //           *grid[JDIR].dV[j] 
-                        //           *grid[KDIR].dV[k];
-			double dV = grid->dV[k][j][i];
+			            double dV = grid->dV[k][j][i];
 
                         NFLX_LOOP(nv) vc[nv] = d->Vc[nv][k][j][i];
                         double smoothing_squared = nbodySmoothingSquared(
@@ -123,17 +119,17 @@ void nbodyCalcDiskFeedback(const Data *d, Grid *grid)
 
                         #if GEOMETRY == POLAR
                         DIM_EXPAND(double xc = R * cos_phi;,
-                               double yc = R * sin_phi;,
-                               double zc = x3[k];)
+                                   double yc = R * sin_phi;,
+                                   double zc = x3[k];)
                         #elif GEOMETRY == SPHERICAL
                         DIM_EXPAND(double xc = r*sin_theta*cos_phi;,
-                               double yc = r*sin_theta*sin_phi;,
-                               double zc = r*cos_theta;)
+                                   double yc = r*sin_theta*sin_phi;,
+                                   double zc = r*cos_theta;)
                         #endif
 
                         DIM_EXPAND(double dx = xc - g_nb.x[l];,
-                               double dy = yc - g_nb.y[l];,
-                               double dz = zc - g_nb.z[l];)
+                                   double dy = yc - g_nb.y[l];,
+                                   double dz = zc - g_nb.z[l];)
 
                         double r3 = DIM_EXPAND(dx*dx, +dy*dy, +dz*dz) + smoothing_squared;
                         r3 *= sqrt(r3);
@@ -142,8 +138,8 @@ void nbodyCalcDiskFeedback(const Data *d, Grid *grid)
                                            *d->Vc[RHO][k][j][i] * dV / r3;
 
                         DIM_EXPAND(g_nb.axdisk[l] += magnitude*dx;,
-                               g_nb.aydisk[l] += magnitude*dy;,
-                               g_nb.azdisk[l] += magnitude*dz;)
+                                   g_nb.aydisk[l] += magnitude*dy;,
+                                   g_nb.azdisk[l] += magnitude*dz;)
                     }
                 }
             }
@@ -192,30 +188,30 @@ double nbodyCalcCellAcceleration(double *v,
 
     double smoothing_squared = nbodySmoothingSquared(v, x1, x2, x3);
 
-    DIM_EXPAND(double ax = 0.0;,
-           double ay = 0.0;,
-           double az = 0.0;)
+    double ax = 0.0;
+    double ay = 0.0;
+    double az = 0.0;
 
     int l;
     for (l = 0; l < NB_N; l++)
     {
         DIM_EXPAND(double dx = g_nb.x[l] - x;,
-               double dy = g_nb.y[l] - y;,
-               double dz = g_nb.z[l] - z;)
+                   double dy = g_nb.y[l] - y;,
+                   double dz = g_nb.z[l] - z;)
 
         double r3 = DIM_EXPAND(dx*dx, +dy*dy, +dz*dz) + smoothing_squared;
         r3 *= sqrt(r3);
         double magnitude = CONST_G_CODE_UNITS*g_nb.m[l]/r3;
 
         DIM_EXPAND(ax += magnitude*dx;,
-               ay += magnitude*dy;,
-               az += magnitude*dz;)
+                   ay += magnitude*dy;,
+                   az += magnitude*dz;)
     }
     
-    #if INDIRECT_TERMS == YES
+    #if INDIRECT_TERM == YES
     DIM_EXPAND(ax -= g_nb.ax_indirect;,
-           ay -= g_nb.ay_indirect;,
-           az -= g_nb.az_indirect;)
+               ay -= g_nb.ay_indirect;,
+               az -= g_nb.az_indirect;)
     #endif
 
     DIM_EXPAND(

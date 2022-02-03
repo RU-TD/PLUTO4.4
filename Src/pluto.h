@@ -915,7 +915,7 @@ extern double g_inputParam[32];
 #endif
 
 #if NBODY_SYS == YES
-  extern Nbody_System g_nb;
+ extern Nbody_System g_nb;
 #endif
 
 #ifdef CHOMBO

@@ -124,6 +124,14 @@ int AdvanceStep (Data *d, timeStep *Dts, Grid *grid)
   DIM_LOOP(nv) TOT_LOOP(k,j,i) Bs0[nv][k][j][i] = d->Vs[nv][k][j][i];
 #endif
 
+  #if NBODY_SYS == YES
+  nbodyCalcDiskFeedback(d,grid);
+  nbodyCalcAccelerations();
+  #if INDIRECT_TERM == YES
+  nbodyCalcIndirectTerm();
+  #endif
+  #endif
+
 /* -- 1c. Compute Particles feedback / Advance with pred. step -- */
 
   #if PARTICLES == PARTICLES_CR
@@ -196,6 +204,17 @@ int AdvanceStep (Data *d, timeStep *Dts, Grid *grid)
 
   g_intStage = 2;
   Boundary (d, ALL_DIR, grid);
+
+/* -- 2b. Advance Nbody system & solution array --*/
+
+  #if NBODY_SYS == YES
+  nbodyAdvanceSystem(g_dt);
+  #if INDIRECT_TERM == YES
+  nbodyCalcDiskFeedback(d, grid);
+  nbodyCalcAccelerations();
+  nbodyCalcIndirectTerm();
+  #endif
+  #endif /* NBODY_SYS */
 
 /* -- 2b. Advance paticles & solution array -- */
 

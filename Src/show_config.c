@@ -371,7 +371,7 @@ void CheckConfig()
     QUIT_PLUTO(1);
     #endif
 
-    #if GEOMETRY == CARTESIAN || GEOMETRY == CYLINDRYCAL
+    #if GEOMETRY == CARTESIAN || GEOMETRY == CYLINDRICAL
     print ("! The nbody integrator works only with 2D polar or 3D spherical coordinates\n");
     QUIT_PLUTO(1);
     #endif
