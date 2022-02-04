@@ -10,7 +10,7 @@ CFLAGS   = -c -O3 -Wundef
 LDFLAGS  = -lm 
 
 PARALLEL = TRUE   
-USE_HDF5 = FALSE
+USE_HDF5 = TRUE
 USE_PNG  = FALSE
 
 #######################################
@@ -26,7 +26,7 @@ endif
 #######################################
 
 ifeq ($(strip $(USE_HDF5)), TRUE)
- HDF5_LIB = /usr/local/lib/HDF5-parallel
+ HDF5_LIB = /opt/homebrew/Cellar/hdf5-mpi/1.12.1
  INCLUDE_DIRS += -I$(HDF5_LIB)/include
  LDFLAGS      += -L$(HDF5_LIB)/lib -lhdf5 -lz
 endif

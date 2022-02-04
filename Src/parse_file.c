@@ -105,7 +105,7 @@ char *ParamFileGet (const char *label, int pos)
    ------------------------------------------------------------- */
 
   if (words == NULL) words = ARRAY_2D(128,128,char);
-  for (k = 0; k < 127; k++) sprintf (words[k],"\0");
+  for (k = 0; k < 127; k++) sprintf (words[k],"\\0");
 
   for (k = 0; k < nlines; k++) {        /* Loop over lines */
     nwords = ParamFileGetWords(fline[k],words);  /* get words for k-th line */
