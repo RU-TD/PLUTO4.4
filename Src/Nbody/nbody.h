@@ -14,6 +14,7 @@ typedef struct NBODY_SYSTEM {
     double *xold, *yold, *zold;
     double *vxold, *vyold, *vzold;
     int *feelsDisk;
+    double *rampupTime;
     
     /* orbital elements */
     double *a;           /* semi-major axis */

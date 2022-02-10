@@ -36,20 +36,23 @@ int nbodyReadPlanetFile(const char *filename)
         }
 
         #if PLANET_FORMAT == CART
-        if (sscanf(line_buffer, "%lf %lf %lf %lf %lf %lf %lf %d", 
+        if (sscanf(line_buffer, "%lf %lf %lf %lf %lf %lf %lf %d %lf", 
                    &(g_nb.m[i]), &(g_nb.x[i]), &(g_nb.y[i]), &(g_nb.z[i]), 
-                   &(g_nb.vx[i]), &(g_nb.vy[i]), &(g_nb.vz[i]), &(g_nb.feelsDisk[i])) != 8)
+                   &(g_nb.vx[i]), &(g_nb.vy[i]), &(g_nb.vz[i]), 
+                   &(g_nb.feelsDisk[i]), &(g_nb.rampupTime[i])) != 9)
         {
             fprintf(stderr, "Error in read_planet_file: Not enough values in line %d\n", i);
             goto read_planet_file_error;
         }
         #elif PLANET_FORMAT == ORBIT
         double a, e, inc, Omega, omega, f;
-        sscanf(line_buffer, "%lf %lf %lf %lf %lf %lf %lf %d", 
-               &(g_nb.m[i]), &a, &e, &inc, &Omega, &omega, &f, &(g_nb.feelsDisk[i]));
+        sscanf(line_buffer, "%lf %lf %lf %lf %lf %lf %lf %d %lf", 
+               &(g_nb.m[i]), &a, &e, &inc, &Omega, &omega, 
+               &f, &(g_nb.feelsDisk[i]), &(g_nb.rampupTime[i]));
         //{
         //    fprintf(stderr, "Error in read_planet_file: Not enough values in line %d\n", i);
-	fprintf(stderr, "%lf %lf %lf %lf %lf %lf %lf %d\n",g_nb.m[i], a, e, inc, Omega, omega, f, g_nb.feelsDisk[i]);
+	    fprintf(stderr, "%lf %lf %lf %lf %lf %lf %lf %d %lf\n", g_nb.m[i], a, e, inc, Omega, omega, 
+                f, g_nb.feelsDisk[i], g_nb.rampupTime[i]);
         //    goto read_planet_file_error;
         //}
         double cO = cos(Omega);

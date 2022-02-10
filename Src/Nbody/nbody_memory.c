@@ -41,6 +41,7 @@ void nbodyAllocateMemory()
     g_nb.azdisk = ARRAY_1D(NB_N, double);
 
     g_nb.feelsDisk = ARRAY_1D(NB_N, int);
+    g_nb.rampupTime = ARRAY_1D(NB_N, double);
 
     g_nb.a = ARRAY_1D(NB_N, double);
     g_nb.e = ARRAY_1D(NB_N, double);
@@ -80,6 +81,7 @@ void nbodyFreeMemory()
     FreeArray1D(g_nb.azdisk);
 
     FreeArray1D(g_nb.feelsDisk);
+    FreeArray1D(g_nb.rampupTime);
 
     FreeArray1D(g_nb.a);
     FreeArray1D(g_nb.e);

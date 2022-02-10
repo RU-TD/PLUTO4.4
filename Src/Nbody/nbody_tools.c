@@ -63,8 +63,8 @@ void nbodyCenterOfMassCoordinatesAndVelocity(int n)
 }
 
 /* Orbital elements of particles 2..N in Jacobian coordinates:
- * This means the orbital elements of particle n are calculated with 
- * respect to the center of mass of the first 1..n-1 particles. */
+   This means the orbital elements of particle n are calculated with 
+   respect to the center of mass of the first 1..n-1 particles. */
 void nbodyCalcOrbitalElements()
 {
     int l;

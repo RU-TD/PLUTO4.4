@@ -63,6 +63,7 @@ void nbodyCalcAccelerations()
     }
 }
 
+/* Calculate disk feedback */
 void nbodyCalcDiskFeedback(const Data *d, Grid *grid)
 {
     int nv;
@@ -160,11 +161,7 @@ void nbodyCalcDiskFeedback(const Data *d, Grid *grid)
 }
 
 /* calculates acceleration of cell (x1, x2, x3) due to all bodies */
-double nbodyCalcCellAcceleration(double *v,
-                                 double x1,
-                                 double x2,
-                                 double x3,
-                                 int dir)
+double nbodyCalcCellAcceleration(double *v, double x1, double x2, double x3, int dir)
 {
     #if GEOMETRY == POLAR
     double sin_phi = sin(x2);
