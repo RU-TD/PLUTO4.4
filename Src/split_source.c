@@ -51,6 +51,10 @@ void SplitSource (const Data *d, double dt, timeStep *Dts, Grid *grid)
   #endif
 #endif
 
+#if CHEMISTRY != NO
+  Chemistry(d->Vc, dt);
+#endif
+
 /* ----------------------------------------------
     Parabolic terms using STS:
 

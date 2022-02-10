@@ -1,0 +1,14 @@
+module prizmo_rates_evaluate_once
+contains
+  ! *****************
+  subroutine init_evaluate_once()
+    use prizmo_commons
+    implicit none
+
+    !!BEGIN_INIT_EVALUATE_ONCE
+
+    !!END_INIT_EVALUATE_ONCE
+
+  end subroutine init_evaluate_once
+
+end module prizmo_rates_evaluate_once

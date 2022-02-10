@@ -1,0 +1,104 @@
+module prizmo_xsecs
+contains
+  ! **************************
+  subroutine load_xsecs_all()
+    use prizmo_commons, only: xsecs
+    implicit none
+
+    call load_energy_grid()
+
+    ! initialize xsecs to zero
+    xsecs(:, :) = 0d0
+
+    !!BEGIN_LOAD_XSECS
+
+    !!END_LOAD_XSECS
+
+  end subroutine load_xsecs_all
+
+  ! ************************
+  ! load xsecs from file_name
+  subroutine load_energy_grid()
+    use prizmo_commons
+    implicit none
+    integer::unit, ios, i
+
+
+    ! open file to read
+    open(newunit=unit, file="runtime_data/energy_grid.dat", status="old", iostat=ios)
+
+    ! check if file exists
+    if(ios/=0) then
+      print *, "ERROR: missing energy grid file"
+      stop
+    end if
+
+    ! loop to read energy grid
+    do i=1,nphoto
+      read(unit, *) energy_grid(i)
+      inv_energy_grid(i) = 1d0 / energy_grid(i)
+    end do
+    close(unit)
+
+  end subroutine load_energy_grid
+
+  ! ************************
+  ! load xsecs from file_name
+  subroutine load_xsecs(idx, file_name, verbose)
+    use prizmo_commons
+    implicit none
+    integer,intent(in)::idx
+    integer,intent(in),optional::verbose
+    character(len=*),intent(in)::file_name
+    integer::unit, ios, i
+    real*8::delta_trapz(nphoto), energy
+
+
+    if(present(verbose)) then
+      if(verbose>0) then
+        print *, "loading ", trim(file_name)
+      end if
+    end if
+
+    ! open file to read
+    open(newunit=unit, file=trim(file_name), status="old", iostat=ios)
+
+    ! check if file exists
+    if(ios/=0) then
+      print *, "ERROR: missing file", trim(file_name)
+      stop
+    end if
+
+    ! loop to read xsecs
+    do i=1,nphoto
+      read(unit, *) energy, xsecs(i, idx)
+    end do
+    close(unit)
+
+    ! store energy difference
+    delta_energy_grid(:) = energy_grid(2:nphoto) - energy_grid(1:nphoto-1)
+
+    delta_trapz(1) = energy_grid(2) - energy_grid(1)
+    ! FIXME delta_trapz(2:nphoto-1) = delta_energy_grid(2:nphoto-1) + delta_energy_grid(1:nphoto-2)
+    delta_trapz(2:nphoto-1) = energy_grid(3:nphoto) - energy_grid(1:nphoto-2)
+    delta_trapz(nphoto) = energy_grid(nphoto) - energy_grid(nphoto-1)
+
+    xsecs_trapz(:, idx) = delta_trapz(:) * xsecs(:, idx) / energy_grid(:)
+    xsecs_trapz_heat(:, idx) = delta_trapz(:) * xsecs(:, idx)
+
+    ! search grid points indexes for Draine flux limits (default is full range)
+    imin_fDraine = 1
+    imax_fDraine = nphoto
+    do i=1,nphoto-1
+      if(energy_grid(i) <= 6d0 .and. energy_grid(i+1) >= 6d0) then
+        imin_fDraine = i
+      end if
+
+      if(energy_grid(i) <= 13.6d0 .and. energy_grid(i+1) >= 13.6d0) then
+        imax_fDraine = i
+        exit  ! energy is ascending, so here no need to continue the loop
+      end if
+    end do
+
+  end subroutine load_xsecs
+end module prizmo_xsecs

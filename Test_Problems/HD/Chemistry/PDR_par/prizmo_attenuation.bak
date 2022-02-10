@@ -1,0 +1,77 @@
+module prizmo_attenuation
+  use prizmo_commons
+  real*8::dust_kappa(nphoto)
+contains
+
+  ! ****************************
+  ! attenuate the flux in a cell with a given length and chemistry
+  subroutine attenuate(flux, n, Tgas, length)
+    use prizmo_commons
+    use prizmo_utils
+    use prizmo_photo
+    use prizmo_tdust
+    implicit none
+    real*8,intent(in)::length, n(nmols), Tgas
+    real*8,intent(inout)::flux(nphoto)
+    real*8::tau(nphoto), Tdust, jem(nphoto)
+    integer::i
+
+    tau(:) = get_tau(n(:), Tgas, length)
+
+    !Tdust = get_Tdust(n, Tgas, flux(:))
+
+    !jem(:) = get_black_body_flux(Tdust) * 2d0 * pi
+
+    flux(:) = flux(:) * exp(-tau(:))
+    !flux(:) = flux(:) - flux(:) * tau(:) + jem(:)
+
+    !do i=1, nphoto
+    !    flux(i) = max(flux(i), 0d0)
+    !end do
+
+  end subroutine attenuate
+
+  ! ****************************
+  ! get optical depth, dimensionless
+  function get_tau(n, Tgas, length) result(tau)
+    use prizmo_commons
+    use prizmo_utils
+    implicit none
+    real*8,intent(in)::length, n(nmols), Tgas
+    real*8::tau(nphoto), inv_ntot
+
+    tau(:) = 0d0  ! 1/cm
+
+    inv_ntot = 1d0 / get_ntot(n(:))
+
+    !!BEGIN_ATTENUATION
+
+    !!END_ATTENUATION
+
+    ! add dust opacity (note: 1/cm)
+    tau(:) = tau(:) + d2g * get_rho(n(:)) * dust_kappa(:)
+
+    ! multiply by the segment length to have dimensionless tau
+    tau(:) = tau(:) * length
+
+  end	function get_tau
+
+  ! ***************************
+  ! load dust opacity from file to dust_kappa common variable, cm2/g
+  subroutine load_dust_opacity(fname)
+    use prizmo_commons
+    implicit none
+    character(len=*),intent(in)::fname
+    integer::unit, i
+    real*8::energy
+
+    print *, "loading opacity file "//trim(fname)//"..."
+    open(newunit=unit,file=fname, status='old')
+    do i=1,nphoto
+       read(unit, *) energy, dust_kappa(i)
+    end do
+    close(unit)
+
+  end subroutine load_dust_opacity
+
+end module prizmo_attenuation

@@ -1,0 +1,27 @@
+module prizmo_rates_interpolable
+contains
+
+  !*******************
+  ! compute rates and store into commons kall(:)
+  subroutine evaluate_interpolable(n, Tgas, Tdust)
+    use prizmo_commons
+    use prizmo_self_shielding
+    use prizmo_utils
+    implicit none
+    real*8,intent(in)::n(nmols), Tgas, Tdust
+    real*8::inv_Tgas, sqrt_Tgas, Te, lnTe, invTe, t
+    integer::i
+
+    ! frequently used quantities
+    inv_Tgas = 1d0 / Tgas
+    sqrt_Tgas = sqrt(Tgas)
+    Te = Tgas * 8.617343d-5  ! Tgas in eV (eV)
+    lnTe = log(Te)  ! ln of Te (#)
+    invTe = 1d0 / Te  ! inverse of T (1/eV)
+
+    !!BEGIN_RATES
+
+    !!END_RATES
+  end subroutine evaluate_interpolable
+
+end module prizmo_rates_interpolable

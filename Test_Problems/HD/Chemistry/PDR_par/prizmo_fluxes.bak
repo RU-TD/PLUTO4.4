@@ -1,0 +1,205 @@
+module prizmo_fluxes
+  !!BEGIN_MAX_SPECIES_NUMBER
+
+  !!END_MAX_SPECIES_NUMBER
+contains
+
+  ! ***********************
+  subroutine print_sorted_fluxes(n, Tgas, jflux, nbest)
+    use prizmo_commons
+    use prizmo_utils
+    implicit none
+    integer,intent(in)::nbest
+    integer::idx(nrea), i
+    real*8,intent(in)::n(nmols), Tgas, jflux(nphoto)
+    real*8::fluxes(nrea)
+    character(len=max_character_len)::rnames(nrea)
+
+    fluxes(:) = get_fluxes(n(:), Tgas, jflux(:))
+    idx(:) = sort_fluxes(fluxes(:))
+    rnames(:) = get_reaction_names()
+
+    print '(2a5,a40,2a17)', "#", "idx", "reaction", "flux", "krate"
+    do i=1,nbest
+      write(*, '(2I5,a40,2E17.8e3)') i, idx(i), rnames(idx(i)), fluxes(idx(i)), kall(idx(i))
+    end do
+
+  end subroutine print_sorted_fluxes
+
+  ! ***********************
+  subroutine print_sorted_fluxes_species(n, Tgas, jflux, nbest, species)
+    use prizmo_commons
+    use prizmo_utils
+    implicit none
+    integer,intent(in)::nbest, species(:)
+    integer::idx(nrea), i
+    real*8,intent(in)::n(nmols), Tgas, jflux(nphoto)
+    real*8::fluxes(nrea)
+    character(len=max_character_len)::rnames(nrea)
+
+    fluxes(:) = get_fluxes(n(:), Tgas, jflux(:))
+    do i=1,nrea
+      if(.not. reaction_has_any_reactants(i, species)) then
+        fluxes(i) = 0d0
+      end if
+    end do
+    idx(:) = sort_fluxes(fluxes(:))
+    rnames(:) = get_reaction_names()
+
+    print '(2a5,a40,2a17)', "#", "idx", "reaction", "flux", "krate"
+    do i=1,min(nbest, nrea)
+      write(*, '(2I5,a40,2E17.8e3)') i, idx(i), rnames(idx(i)), fluxes(idx(i)), kall(idx(i))
+    end do
+
+  end subroutine print_sorted_fluxes_species
+
+  ! *********************
+  function get_sorted_fluxes(n, Tgas, jflux) result(fluxes_sorted)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(nmols), Tgas, jflux(nphoto)
+    real*8::fluxes_sorted(nrea)
+    real*8::fluxes(nrea)
+    integer::idx(nrea), i
+
+    fluxes(:) = get_fluxes(n(:), Tgas, jflux(:))
+    idx(:) = sort_fluxes(fluxes(:))
+
+    do i=1,nrea
+      fluxes_sorted(i) = fluxes(idx(i))
+    end do
+
+  end function get_sorted_fluxes
+
+  ! *********************
+  function get_sorted_fluxes_species(n, Tgas, jflux, species) result(fluxes_sorted)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(nmols), Tgas, jflux(nphoto)
+    real*8::fluxes_sorted(nrea)
+    real*8::fluxes(nrea)
+    integer::idx(nrea), i
+    integer,intent(in)::species(:)
+
+    fluxes(:) = get_fluxes(n(:), Tgas, jflux(:))
+    do i=1,nrea
+      if(.not. reaction_has_any_reactants(i, species)) then
+        fluxes(i) = 0d0
+      end if
+    end do
+    idx(:) = sort_fluxes(fluxes(:))
+
+    do i=1,nrea
+      fluxes_sorted(i) = fluxes(idx(i))
+    end do
+
+  end function get_sorted_fluxes_species
+
+
+  ! **********************
+  function sort_fluxes(fluxes_in) result(idx)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::fluxes_in(nrea)
+    real*8::tmp, fluxes(nrea)
+    integer::idx(nrea), i, itmp
+    logical::swap
+
+    fluxes(:) = fluxes_in(:)
+
+    ! fill indexes
+    do i=1,nrea
+      idx(i) = i
+    end do
+
+    ! loop until there is nothing to swap
+    do
+      ! swap flag
+      swap = .false.
+      ! loop on elements to swap if not sorted
+      do i=2,nrea
+        ! if not sorted swap
+        if(fluxes(i) > fluxes(i-1)) then
+          swap = .true.
+          ! swap fluxes
+          tmp = fluxes(i)
+          fluxes(i) = fluxes(i-1)
+          fluxes(i-1) = tmp
+          ! swap indeces
+          itmp = idx(i)
+          idx(i) = idx(i-1)
+          idx(i-1) = itmp
+        end if
+      end do
+      if(swap.eqv..false.) exit
+    end do
+
+
+  end function sort_fluxes
+
+  ! **********************
+  function get_fluxes(n, Tgas, jflux) result(fluxes)
+    use prizmo_commons
+    use prizmo_tdust
+    use prizmo_rates
+    use prizmo_rates_photo
+    implicit none
+    real*8,intent(in)::n(nmols), Tgas
+    real*8::fluxes(nrea), Tdust, jflux(nphoto)
+
+    Tdust = get_Tdust(n(:), Tgas, jflux(:))
+
+    ! compute non-photochemical rates
+    call compute_rates(n(:), Tgas, Tdust, jflux(:))
+
+    ! compute photochemical rates
+    call compute_rates_photo(n(:), Tgas, jflux(:))
+
+    !!BEGIN_FLUXES
+
+    !!END_FLUXES
+
+  end function get_fluxes
+
+  ! **********************
+  ! check if the reaction with index idx_reaction has any of the species listed in species(:)
+  function reaction_has_any_reactants(idx_reaction, species) result(has_any)
+    use prizmo_commons
+    implicit none
+    integer,intent(in)::species(:), idx_reaction
+    logical::has_any
+    integer::i, j, indexes(nrea, max_indexes)
+
+    ! default is not found
+    has_any = .false.
+
+    indexes(:, :) = get_species_indexes()
+
+    ! loop on indexes
+    do i=1,size(species)
+      ! loop on reactants
+      do j=1,max_indexes
+        ! if found return with true
+        if(indexes(idx_reaction, j) == species(i)) then
+          has_any = .true.
+          return
+        end if
+      end do
+    end do
+
+  end function reaction_has_any_reactants
+
+  ! **********************
+  function get_species_indexes() result(indexes)
+    use prizmo_commons
+    implicit none
+    real*8::indexes(nrea, max_indexes)
+
+    !!BEGIN_SPECIES_INDEXES
+
+    !!END_SPECIES_INDEXES
+
+  end function get_species_indexes
+
+
+end module prizmo_fluxes

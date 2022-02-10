@@ -1,0 +1,128 @@
+module prizmo_heating_photo
+  use prizmo_commons
+  ! heating threshold energy, eV
+  real*8::xsecs_heating_threshold(nrea)
+  real*8::pre_integral_heat(nrea)
+contains
+
+  ! **************************
+  ! photo heating based on Av, including H2 dissociation, erg/s/cm3
+  function heating_photo(n, Tgas, jflux) result(heat)
+    use prizmo_commons
+    use prizmo_self_shielding
+    use prizmo_utils
+    implicit none
+    real*8,intent(in)::n(nmols), Tgas, jflux(nphoto)
+    real*8::heat, dd, ncrn, ncrd1, ncrd2, yH, yH2
+    real*8::ncr, hf, Rdiss, heat_eV, nH2, f_ntot, xe
+
+    nH2 = max(n(idx_H2), 0d0)
+
+    dd = get_Hnuclei(n(:))
+    ncrn = 1d6 / sqrt(Tgas)
+    ncrd1 = 1.6 * exp(-(4d2 / Tgas)**2) + 1d-40
+    ncrd2 = 1.4 * exp(- 1.2d4 / (Tgas + 1.2d3)) + 1d-40
+
+    yH = n(idx_H) / dd + 1d-40
+    yH2 = nH2 / dd + 1d-40
+
+    ncr = ncrn / (ncrd1 * yH + ncrd2 * yH2)
+    hf = dd / (dd + ncr)
+
+    ! default if H2 photodissociation is not present
+    Rdiss = 0d0
+
+    !!BEGIN_H2_PHOTODISS_RATE
+
+    !!END_H2_PHOTODISS_RATE
+
+    ! H2 dissociation heating, erg/s/cm3
+    heat = (6.4d-13 + 2.7d-11 * hf) * Rdiss * nH2
+
+    ! ntot threshold, cm-3
+    f_ntot = 1d-10 * get_ntot(n(:))
+
+    ! heating in eV for multiline frequency
+    heat_eV = 0d0
+
+    !!BEGIN_ENERGY_EXCESS
+
+    !!END_ENERGY_EXCESS
+
+    ! effciency following Xu & McCray 1991
+    xe = get_electrons(n(:)) / get_ntot(n(:))
+    !if(xe < 0.95) then
+    !  heat_eV = heat_eV * 0.9971 * (1d0 - (1d0 - xe**0.2663)**1.3163)
+    !end if
+
+    ! effciency with a continuos function, but with a 10% error on Xu & McCray 1991
+    !FIXME heat_eV = heat_eV * 1d1**(log10(xe + 1d-40) * 0.25452)
+
+    ! add photoheating to H2 photodissociation heating
+    heat = heat + heat_eV * ev2erg
+
+  end function heating_photo
+
+  ! ****************************
+  ! pre integrate heating factors on the current radiation flux
+  subroutine pre_integrate_photoheating(jflux)
+    use prizmo_commons
+    use prizmo_self_shielding
+    implicit none
+    real*8,intent(in)::jflux(nphoto)
+    integer::i
+
+    ! set default value
+    pre_integral_heat(:) = 0d0
+
+    !!BEGIN_PHOTOHEATING_PREINTEGRATE
+
+    !!END_PHOTOHEATING_PREINTEGRATE
+
+    ! DEBUG: uncomment here below if needed
+    !do i=1,nrea
+    !  if(pre_integral_heat(i) > 0d0) print *, i, pre_integral_heat(i)
+    !end do
+
+  end subroutine pre_integrate_photoheating
+
+  ! *************************
+  ! compute rate heating, erg/s
+  function integrate_rate_photo_heating(jflux, idx) result(k)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::jflux(nphoto)
+    integer,intent(in)::idx
+    real*8::k, kh
+
+    ! xsecs integral arrays are loaded in prizmo_xsecs.f90
+    k = sum(Jflux(:) * xsecs_trapz(:, idx)) / 2d0
+    kh = sum(Jflux(:) * xsecs_trapz_heat(:, idx)) / 2d0
+
+    ! xsecs_heating_threshold (eV) is loaded in this module (check next functions)
+    k = (kh - xsecs_heating_threshold(idx) * k) / hplanck_eV
+
+    if(k < 0d0) then
+       print *, "WARNING: negative photo heating integral, idx, rate", idx, k
+       k = max(k, 0d0)
+    end if
+
+  end function integrate_rate_photo_heating
+
+  ! ************************
+  ! load thresholds (eV) from file for heating
+  subroutine load_heating_thresholds(fname)
+    use prizmo_commons
+    implicit none
+    integer::i, unit
+    character(len=*),intent(in)::fname
+
+    open(newunit=unit, file=trim(fname), status="old")
+    do i=1,nrea
+       read(unit, *) xsecs_heating_threshold(i)
+    end do
+    close(unit)
+
+  end subroutine load_heating_thresholds
+
+end module prizmo_heating_photo

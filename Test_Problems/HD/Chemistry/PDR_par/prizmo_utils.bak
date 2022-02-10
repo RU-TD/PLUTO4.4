@@ -1,0 +1,140 @@
+module prizmo_utils
+contains
+
+  ! ****************************
+  ! get electron number density from the other charged species
+  function get_electrons(n) result(ne)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(nmols)
+    real*8::ne
+
+    !!BEGIN_GET_ELECTRONS
+
+    !!END_GET_ELECTRONS
+
+  end function get_electrons
+
+  ! **********************
+  function get_species_name(idx) result(name)
+    use prizmo_commons
+    implicit none
+    integer,intent(in):: idx
+    character(len=max_character_len)::names(nmols), name
+
+    names(:) = get_species_names()
+
+    name = trim(names(idx))
+
+  end function get_species_name
+
+  ! **********************
+  function get_species_names() result(names)
+    use prizmo_commons
+    implicit none
+    character(len=max_character_len)::names(nmols)
+
+
+    !!BEGIN_SPECIES_NAMES
+
+    !!END_SPECIES_NAMES
+
+  end function get_species_names
+
+  ! **********************
+  ! get an array of string with reaction verbatim
+  function get_reaction_names() result(rnames)
+    use prizmo_commons
+    implicit none
+    character(len=max_character_len)::rnames(nrea)
+
+    !!BEGIN_REACTION_NAMES
+
+    !!END_REACTION_NAMES
+
+  end function get_reaction_names
+
+  ! *********************
+  ! get species masses in g
+  ! WARNING: this is an alias. use the common variable where possible
+  function get_species_mass() result(masses)
+    use prizmo_commons
+    implicit none
+    real*8::masses(nmols)
+
+    masses(:) = mass(:)
+
+  end function get_species_mass
+
+  ! *********************************
+  ! get total gas density, g/cm3
+  function get_rho(n) result(rho)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(nmols)
+    real*8::rho
+
+    ! rho = sum(mass(:) * n(:))
+    ! reduced version
+    !!BEGIN_GET_RHO
+
+    !!END_GET_RHO
+
+  end function get_rho
+
+  ! *********************
+  ! get total density, cm-3
+  function get_ntot(n) result(ntot)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(:)
+    real*8::ntot
+
+    !!BEGIN_GET_NTOT
+
+    !!END_GET_NTOT
+    !ntot = n(idx_H2) + n(idx_H) + n(idx_Hj)  + n(idx_H2j) + n(idx_He) + n(idx_Hej) + n(idx_E)
+
+  end function get_ntot
+
+  !!BEGIN_GET_X_NUCLEI
+
+  !!END_GET_X_NUCLEI
+
+  ! **********************
+  ! get adiabatic index
+  function get_gamma_ad(n, Tgas) result(gamma_ad)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(:), Tgas
+    real*8::gamma_ad
+
+    gamma_ad = 7d0 / 5d0
+
+  end function get_gamma_ad
+
+  ! *******************
+  ! mean molecular weight, no dimensions
+  function get_mu(n) result(mu)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(:)
+    real*8::mu
+
+    mu = sum(n(:) * mass(:)) / sum(n(:)) / proton_mass
+
+  end function get_mu
+
+  ! *******************
+  ! dimensional mean molecular weight, g
+  function get_mu_g(n) result(mu)
+    use prizmo_commons
+    implicit none
+    real*8,intent(in)::n(:)
+    real*8::mu
+
+    mu = sum(n(:) * mass(:)) / sum(n(:))
+
+end function get_mu_g
+
+end module prizmo_utils
