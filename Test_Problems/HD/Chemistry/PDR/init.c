@@ -46,6 +46,20 @@ void Init (double *us, double x1, double x2, double x3)
   us[IDX_CHEM_Hej] = 1e-1;
   us[IDX_CHEM_E] = us[IDX_CHEM_Hej];
 }
+
+/* ********************************************************************* */
+void InitDomain (Data *d, Grid *grid)
+/*! 
+ * Assign initial condition by looping over the computational domain.
+ * Called after the usual Init() function to assign initial conditions
+ * on primitive variables.
+ * Value assigned here will overwrite those prescribed during Init().
+ *
+ *
+ *********************************************************************** */
+{
+}
+
 /* ********************************************************************* */
 void Analysis (const Data *d, Grid *grid)
 /* 
@@ -100,15 +114,14 @@ void find_CommunicationNeighbours(Grid *grid)
 
         MPI_Comm_size(MPI_COMM_WORLD, &nproc);
 
-        ldi.x1_begin = grid[IDIR].beg;
-        ldi.x1_end = grid[IDIR].end;
+        ldi.x1_begin = grid->beg[IDIR];
+        ldi.x1_end = grid->end[IDIR];
 
-        ldi.x2_begin = grid[JDIR].beg;
-        ldi.x2_end = grid[JDIR].end;
+        ldi.x2_begin = grid->beg[JDIR];
+        ldi.x2_end = grid->end[JDIR];
 
-        ldi.x3_begin = grid[KDIR].beg;
-        ldi.x3_end = grid[KDIR].end;
-
+        ldi.x3_begin = grid->beg[KDIR];
+        ldi.x3_end = grid->end[KDIR];
 
         if(prank == 0)
         {
@@ -162,7 +175,7 @@ void calculate_ColumnDensity_perDomain(Grid* grid, const Data* d, int val)
                         for (i = IBEG; i <= IEND; i++)
                         {
                                 density = d->Vc[RHO][k][j][i] * UNIT_DENSITY;
-                                dr = grid[IDIR].dx[i]*UNIT_LENGTH;
+                                dr = grid->dx[0][i]*UNIT_LENGTH;
 				if(val == 0) {
                                 	column_density += density/mpart*dr;
 				} else if (val == 1) {

@@ -5,9 +5,10 @@
 ########################################################################
 
 CC       = mpicc
-CFLAGS   = -c -O3 -Wundef
-#CFLAGS   = -c -fno-trapping-math -fno-signed-zeros -fassociative-math 
-LDFLAGS  = -lm 
+FC       = ifort
+CFLAGS   = -c -O3 -v
+FFLAGS   = -O3 -xHost -g -v
+LDFLAGS  =  -mkl -lm -ldl
 
 PARALLEL = TRUE   
 USE_HDF5 = FALSE

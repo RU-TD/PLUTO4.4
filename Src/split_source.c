@@ -20,7 +20,9 @@
 */
 /* ///////////////////////////////////////////////////////////////////// */
 #include "pluto.h"
-
+#if CHEMISTRY != NO
+    #include "chemistry.h"
+#endif
 /* ********************************************************************* */
 void SplitSource (const Data *d, double dt, timeStep *Dts, Grid *grid)
 /*! 
@@ -52,7 +54,7 @@ void SplitSource (const Data *d, double dt, timeStep *Dts, Grid *grid)
 #endif
 
 #if CHEMISTRY != NO
-  Chemistry(d->Vc, dt);
+  Chemistry(d->Vc, dt, grid);
 #endif
 
 /* ----------------------------------------------

@@ -46,7 +46,6 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
   for(int j = 0; j < NPHOTO; j++){
     jfluxes[j] *= Gnot * 2e0 * pi;
   }
-  //print("%le\n",jfluxes[0]);
 
   DOM_LOOP(k,j,i){
     rho = v[RHO][k][j][i];
@@ -57,17 +56,14 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
     rho_chem = rho*UNIT_DENSITY;
 
     Av = irradiation.column_density[k][j][i][0]*N2Av;
-    dx = grid[IDIR].dx[i]*UNIT_LENGTH;
+    dx = grid->dx[IDIR][i]*UNIT_LENGTH;
 
     // attenuate radiation in the grid cell
-    //print("PRIMA %d %le\n",i,jfluxes[0]);
     prizmo_attenuate_rho_c(jfluxes, x, &Tgas, &dx, &rho_chem);
-    //print("DOPO %d %le\n",i,jfluxes[0]);
 
     // set radiation variables
     prizmo_set_variable_g0_c(&Gnot);
     prizmo_set_variable_av_c(&Av);
-    //print("%d %le %le %le %le %le\n",i,irradiation.column_density[k][j][i][0],irradiation.column_density[k][j][i][1],irradiation.column_density[k][j][i][2],irradiation.column_density[k][j][i][3],irradiation.column_density[k][j][i][4]);
     // set incoming column density to the cell
     prizmo_set_variable_nh2_incoming_c(&irradiation.column_density[k][j][i][1]);
     prizmo_set_variable_nco_incoming_c(&irradiation.column_density[k][j][i][2]);

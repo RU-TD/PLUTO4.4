@@ -3,7 +3,7 @@
 void lkrm_rho_c(double *, double *, double *, double *);
 
 /* ********************************************************************* */
-void Chemistry(Data_Arr v, double dt)
+void Chemistry(Data_Arr v, double dt, Grid *grid)
 /*!
  *  Chemistry
  *********************************************************************** */
