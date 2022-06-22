@@ -11,6 +11,7 @@ objs = opkda1.o
 objs += opkda2.o
 objs += opkdmain.o
 objs += prizmo_fit.o
+objs += prizmo_linear_solver.o
 #objs += prizmo_spline.o
 objs += prizmo_commons.o
 objs += prizmo_utils.o
@@ -36,15 +37,17 @@ objs += prizmo_ode.o
 objs += prizmo_attenuate.o
 objs += prizmo_core.o
 objs += prizmo.o
+objs += prizmo_c.o
+
 OBJ     += $(CHEM_OBJ) $(objs)
 HEADERS += chemistry.h mod_defs.h
 
-LDFLAGS += -lm
+LDFLAGS += -lifcore -limf
 
 $(CHEM_OBJ):  $(HEADERS)
 
 .f.o:
-	$(FC) -c $(FFLAGS) $(INCLUDE_DIRS) $<
+	$(FC) -c -nowarn $(INCLUDE_DIRS) $<
 
 .f90.o:
 	$(FC) -c $(FFLAGS) $(INCLUDE_DIRS) $<

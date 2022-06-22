@@ -44,6 +44,7 @@ static char *TotalExecutionTime (double);
 static int Integrate (Data *, timeStep *, Grid *);
 static void CheckForOutput (Data *, Runtime *, time_t, Grid *);
 static void CheckForAnalysis (Data *, Runtime *, Grid *);
+extern void prizmo_init_c();
 
 /* ********************************************************************* */
 int main (int argc, char *argv[])
@@ -156,6 +157,16 @@ int main (int argc, char *argv[])
 
   if (cmd_line.maxsteps == 0) last_step = 1;
   print ("> Starting computation... \n\n");  
+
+/* --------------------------------------------------------
+   0f. Initialize chemistry
+   ----------------------------------------------------- */
+
+#if CHEMISTRY != NO
+  print("start prizmo_init\n");
+  prizmo_init_c();
+  print("finished\n");
+#endif
 
 /* =====================================================================
    1.  M A I N      L O O P      S T A R T S      H E R E

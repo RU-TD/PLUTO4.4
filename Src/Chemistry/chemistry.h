@@ -13,5 +13,4 @@
 
    ############################################################## */
 
-//void   Chemistry(double *v);
 void   Chemistry(Data_Arr v, double dt, Grid *grid);

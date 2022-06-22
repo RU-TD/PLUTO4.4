@@ -15,6 +15,7 @@
 */
 /* ///////////////////////////////////////////////////////////////////// */
 #include "pluto.h"
+
 double FieldAverage(double, double, Grid *, int, int);
 
 void initialize_ColumnDensity(Grid *grid)
@@ -23,10 +24,11 @@ void initialize_ColumnDensity(Grid *grid)
         irradiation.neighbour.receive_rank = -1;
         irradiation.neighbour.send_rank = -1;
 
-        irradiation.column_density = (double****)Array4D(NX3_TOT, NX2_TOT, NX1_TOT, 5, sizeof(double));
-        irradiation.jflux = (double****)Array4D(NX3_TOT, NX2_TOT, NX1_TOT, NPHOTO, sizeof(double));
-        irradiation.data_buffer = malloc(sizeof(double) * (NX2 * NX3));
-        irradiation.column_density_offset = malloc(sizeof(double) * (NX2 * NX3));
+        irradiation.column_density = ARRAY_4D(3, NX3_TOT, NX2_TOT, NX1_TOT, double);
+        irradiation.jflux = ARRAY_2D(NX1_TOT, NPHOTO, double);
+	irradiation.jflux0 = ARRAY_1D(NPHOTO, double);
+        irradiation.data_buffer = ARRAY_1D(NX2*NX3, double);
+        irradiation.column_density_offset = ARRAY_1D(NX2*NX3, double);
 
         for(n = 0; n < NX2 * NX3; ++n)
         {

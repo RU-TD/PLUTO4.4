@@ -4,14 +4,16 @@
 #             
 ########################################################################
 
-CC       = mpicc
+CC       = mpiicc
 FC       = ifort
-CFLAGS   = -c -O3 -v
-FFLAGS   = -O3 -xHost -g -v
-LDFLAGS  =  -mkl -lm -ldl
+CFLAGS   = -cc=icc -c -O3 -march=native 
+#CFLAGS   = -c -O0
+#FFLAGS   = -O0 -check all -warn all -fpe0 -u -traceback -warn nounused -g -init=snan,zero,arrays -ftrapuv -check noarg_temp_created
+FFLAGS   = -O3 -xHost 
+LDFLAGS  =  -qmkl -lm -ldl
 
 PARALLEL = TRUE   
-USE_HDF5 = FALSE
+USE_HDF5 = TRUE
 USE_PNG  = FALSE
 
 #######################################
@@ -27,9 +29,9 @@ endif
 #######################################
 
 ifeq ($(strip $(USE_HDF5)), TRUE)
- HDF5_LIB = /usr/local/lib/HDF5-parallel
- INCLUDE_DIRS += -I$(HDF5_LIB)/include
- LDFLAGS      += -L$(HDF5_LIB)/lib -lhdf5 -lz
+ HDF5_LIB = $(HDF5_HOME)
+ INCLUDE_DIRS += -I$(HDF5_HOME)/include
+ LDFLAGS      += -L$(HDF5_HOME)/lib64 -lhdf5 -lz
 endif
 
 #######################################
