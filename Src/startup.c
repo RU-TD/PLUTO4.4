@@ -18,25 +18,6 @@
 
 double FieldAverage(double, double, Grid *, int, int);
 
-void initialize_ColumnDensity(Grid *grid)
-{
-        int n = 0,k,j,i;
-        irradiation.neighbour.receive_rank = -1;
-        irradiation.neighbour.send_rank = -1;
-
-        irradiation.column_density = (double****)Array4D(NX3_TOT, NX2_TOT, NX1_TOT, 3, sizeof(double));
-        irradiation.jflux = (double****)Array4D(NX3_TOT, NX2_TOT, NX1_TOT, NPHOTO, sizeof(double));
-        irradiation.data_buffer = malloc(sizeof(double) * (NX2 * NX3));
-        irradiation.column_density_offset = malloc(sizeof(double) * (NX2 * NX3));
-
-        for(n = 0; n < NX2 * NX3; ++n)
-        {
-                irradiation.column_density_offset[n] = 0.;
-        }
-
-        find_CommunicationNeighbours(grid);
-}
-
 /* ********************************************************************* */
 void Startup (Data *d, Grid *grid)
 /*! 
@@ -89,7 +70,9 @@ void Startup (Data *d, Grid *grid)
       primitive variables.
    ------------------------------------------------------ */
 
-  initialize_ColumnDensity(grid);
+#if CHEMISTRY == YES
+  initialize_Microphysics(grid);
+#endif
 
   KTOT_LOOP(k) { 
   JTOT_LOOP(j) { 

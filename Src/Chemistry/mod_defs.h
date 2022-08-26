@@ -169,21 +169,16 @@ typedef struct COMMUNICATION_NEIGHBOUR
 typedef struct IRRADIATION_DATA
 {
         CommunicationNeighbour neighbour;
-        double****      column_density;
-        double**     jflux;
-	double*      jflux0;
-        double* data_buffer;
-        double* column_density_offset;
+        double**** column_density;
+        double**** jflux;
+	double*    jflux0;
+        double*    data_buffer;
+	double*    jflux_buffer;
+        double*    column_density_offset;
 
 } IrradiationData;
 
 void initialize_ColumnDensity(Grid *grid);
-
-void find_CommunicationNeighbours(Grid *grid);
-void calculate_ColumnDensity(Grid *grid, const Data* data);
-
-void find_CommunicationNeighbour(int current_rank, LocalDomainInfo *domain_info_array, int nproc, CommunicationNeighbour* cn);
-void calculate_ColumnDensity_perDomain(Grid* grid, const Data* data, int val);
 
 Riemann_Solver TwoShock_Solver, LF_Solver, Roe_Solver, HLL_Solver,
                HLLC_Solver, RusanovDW_Solver;

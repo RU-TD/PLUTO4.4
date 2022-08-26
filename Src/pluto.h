@@ -761,6 +761,10 @@ typedef double ****Data_Arr;
  #include "Particles/particles.h"
 #endif
 
+#if (CHEMISTRY != NO)                   /* Chemistry Header File */
+ #include "Chemistry/chemistry.h"
+#endif
+
 #ifdef SHEARINGBOX
  #include "MHD/ShearingBox/shearingbox.h"   /* Shearing box header file */
 #endif

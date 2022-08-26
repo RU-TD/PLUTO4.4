@@ -325,6 +325,9 @@ int main (int argc, char *argv[])
   #ifdef PARALLEL
   LogFileClose();
   MPI_Barrier (MPI_COMM_WORLD);
+  #if CHEMISTRY == YES
+   cleanup_Microphysics();
+  #endif
   AL_Finalize ();
   #endif
 

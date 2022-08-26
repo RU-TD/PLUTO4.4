@@ -31,9 +31,7 @@
 /* ///////////////////////////////////////////////////////////////////// */
 #include "pluto.h"
 #include "globals.h"
-#if CHEMISTRY != NO
-    #include "chemistry.h"
-#endif
+
 #ifndef SHOW_TIME_STEPS
   #define SHOW_TIME_STEPS  NO  /* Show time steps due to different processes */
 #endif
@@ -325,6 +323,9 @@ int main (int argc, char *argv[])
   #ifdef PARALLEL
   LogFileClose();
   MPI_Barrier (MPI_COMM_WORLD);
+  #if CHEMISTRY == YES
+   cleanup_Microphysics();
+  #endif
   AL_Finalize ();
   #endif
 
