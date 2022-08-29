@@ -23,7 +23,6 @@ void initialize_Microphysics(Grid *grid)
     irradiation.jflux0 = ARRAY_1D(NPHOTO, double);
     irradiation.data_buffer = ARRAY_1D(NX2*NX3, double);
     irradiation.column_density_offset = ARRAY_1D(NX2*NX3, double);
-    irradiation.jflux_buffer = ARRAY_1D(NPHOTO*NX1*NX2*NX3, double);
 
     for(n = 0; n < NX2 * NX3; ++n)
     {
@@ -44,7 +43,6 @@ void cleanup_Microphysics()
     FreeArray1D((void *) irradiation.jflux0);
     FreeArray1D((void *) irradiation.data_buffer);
     FreeArray1D((void *) irradiation.column_density_offset);
-    FreeArray1D((void *) irradiation.jflux_buffer);
 }
 
 /* ********************************************************************* */
@@ -92,10 +90,11 @@ void read_jflux()
 {
   FILE *fout;
   double Jscale = 1.e1;
+  int n;
 
   // load radiation at 1 AU
   fout = fopen("runtime_data/radiation_field.dat", "r");
-  for (int n=0; n<NPHOTO; n++){
+  NPHOTO_LOOP(n) {
     fscanf(fout, "%le", &irradiation.jflux0[n]);
     irradiation.jflux0[n] *= 2.*CONST_PI*Jscale;
   }
@@ -201,15 +200,16 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
     double jflux[NPHOTO];
     MPI_Status status;
  
+    // The radiation attenuation calculation needs to run in serial because 
+    // it depends on the value of the previous cell.
+    // TODO: restrict this calculation only for spherical coordinates.
     for (rank=0; rank<grid->nproc[IDIR]; rank++){
       if(prank == rank){
-        NTRACER_LOOP(l) x[l-TRC] = 0.;
-
         KTOT_LOOP(k){
           JTOT_LOOP(j){
             if(rank == 0){
-              //initialize radiation attenuation
-              for (n=0; n<NPHOTO; n++){
+              //initialize radiation fluxes at r=0 to their initial value
+              NPHOTO_LOOP(n) {
                 jflux[n] = irradiation.jflux0[n];
                 irradiation.jflux[k][j][0][n] = irradiation.jflux0[n];
               }
@@ -217,15 +217,14 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
 	    else MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, &status);
 
             for (i = 0; i < IEND; i++){
-                //calculate radiation attenutation contribution
                 density = v[RHO][k][j][i] * UNIT_DENSITY;
                 NTRACER_LOOP(l) x[l-TRC] = v[l][k][j][i];
                 dr = grid->dx[IDIR][i]*UNIT_LENGTH;
                 Tgas = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
+		//calculate radiation attenuation at cell i
                 prizmo_rt_rho_c(x, &density, &Tgas, jflux, &dr);
-                for (n=0; n<NPHOTO; n++){
-                    irradiation.jflux[k][j][i+1][n] = jflux[n];
-                }
+		//assign attenuated radiation flux to the next radial cell
+		NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
             }
 	    if (rank != grid->nproc[IDIR]-1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
           }

@@ -730,6 +730,7 @@ typedef double ****Data_Arr;
 #define NIONS_LOOP(n)     for ((n) = NFLX; (n) < (NFLX+NIONS); (n)++)
 #define NTRACER_LOOP(n)   for ((n) = TRC;  (n) < (TRC+NTRACER); (n)++)
 #define NSCL_LOOP(n)      for ((n) = NFLX; (n) < (NFLX+NSCL); (n)++)
+#define NPHOTO_LOOP(n)    for ((n) = 0; (n) < (NPHOTO); (n)++)
 
 #if DUST_FLUID == YES
   #include "Dust_Fluid/dust_fluid.h"            /* Dust header file */
