@@ -14,7 +14,6 @@ void initialize_Microphysics(Grid *grid)
  *
  *********************************************************************** */
 {
-    int n;
     irradiation.neighbour.receive_rank = -1;
     irradiation.neighbour.send_rank = -1;
 
@@ -24,7 +23,7 @@ void initialize_Microphysics(Grid *grid)
     irradiation.data_buffer = ARRAY_1D(NX2*NX3, double);
     irradiation.column_density_offset = ARRAY_1D(NX2*NX3, double);
 
-    for(n = 0; n < NX2 * NX3; ++n)
+    for(int n = 0; n < NX2 * NX3; ++n)
     {
         irradiation.column_density_offset[n] = 0.;
     }
@@ -51,35 +50,35 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
  *  Chemistry
  *********************************************************************** */
 {
-  int i,j,k,n;
-  double x[NTRACER];
-  double Tgas, Tdust, dx;
-  double dt_s;
-  double rho, T;
+    int i,j,k,n;
+    double x[NTRACER];
+    double Tgas, Tdust, dx;
+    double dt_s;
+    double rho, T;
 
-  DOM_LOOP(k,j,i){
-    rho = v[RHO][k][j][i]*UNIT_DENSITY;
-    Tgas = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
+    DOM_LOOP(k,j,i){
+        rho = v[RHO][k][j][i]*UNIT_DENSITY;
+        Tgas = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
 
-    NTRACER_LOOP(n) x[n-TRC] = v[n][k][j][i];
+        NTRACER_LOOP(n) x[n-TRC] = v[n][k][j][i];
  
-    dt_s = dt*UNIT_LENGTH/UNIT_VELOCITY;
-    dx = grid->dx[IDIR][i]*UNIT_LENGTH;
+        dt_s = dt*UNIT_LENGTH/UNIT_VELOCITY;
+        dx = grid->dx[IDIR][i]*UNIT_LENGTH;
 
-    // set incoming column density to the cell
-    prizmo_set_radial_ncol_h2_c(&irradiation.column_density[1][k][j][i]);
-    prizmo_set_radial_ncol_co_c(&irradiation.column_density[2][k][j][i]);
+        // set incoming column density to the cell
+        prizmo_set_radial_ncol_h2_c(&irradiation.column_density[1][k][j][i]);
+        prizmo_set_radial_ncol_co_c(&irradiation.column_density[2][k][j][i]);
 
-    // set excaping column density from the cell
-    prizmo_set_vertical_ncol_co_c(&irradiation.column_density[2][k][j][i]);
+        // set excaping column density from the cell
+        prizmo_set_vertical_ncol_co_c(&irradiation.column_density[2][k][j][i]);
 
-    // CALL PRIZMO
-    prizmo_evolve_rho_c(x, &rho, &Tgas, irradiation.jflux[k][j][i], &dt_s);
+        // CALL PRIZMO
+        prizmo_evolve_rho_c(x, &rho, &Tgas, irradiation.jflux[k][j][i], &dt_s);
 
-    v[PRS][k][j][i] = v[RHO][k][j][i]*Tgas/(KELVIN*g_inputParam[MU]);
+        v[PRS][k][j][i] = v[RHO][k][j][i]*Tgas/(KELVIN*g_inputParam[MU]);
 
-    NTRACER_LOOP(n) v[n][k][j][i] = x[n-TRC];
-  }
+        NTRACER_LOOP(n) v[n][k][j][i] = x[n-TRC];
+    }
 }
 
 /*********************************************************************** */
@@ -88,17 +87,17 @@ void read_jflux()
  *
  *********************************************************************** */
 {
-  FILE *fout;
-  double Jscale = 1.e1;
-  int n;
+    FILE *fout;
+    double Jscale = 1.e1;
+    int n;
 
-  // load radiation at 1 AU
-  fout = fopen("runtime_data/radiation_field.dat", "r");
-  NPHOTO_LOOP(n) {
-    fscanf(fout, "%le", &irradiation.jflux0[n]);
-    irradiation.jflux0[n] *= 2.*CONST_PI*Jscale;
-  }
-  fclose(fout);
+    // load radiation at 1 AU
+    fout = fopen("runtime_data/radiation_field.dat", "r");
+    NPHOTO_LOOP(n) {
+        fscanf(fout, "%le", &irradiation.jflux0[n]);
+        irradiation.jflux0[n] *= 2.*CONST_PI*Jscale;
+    }
+    fclose(fout);
 }
 
 /*********************************************************************** */
@@ -321,25 +320,21 @@ void calculate_ColumnDensity(Data_Arr v, Grid *grid)
  *
  *********************************************************************** */
 {
-        int k, j, i, l, n;
+    int k, j, i, l, n;
 
-        for (l=0; l<3; l++)
-        {
-                calculate_ColumnDensity_perDomain(v, grid, l);
+    for (l=0; l<3; l++)
+    {
+        calculate_ColumnDensity_perDomain(v, grid, l);
 
-                n = 0;
-                for (k = KBEG; k <= KEND; k++)
-                {
-                        for (j = JBEG; j <= JEND; j++)
-                        {
-                                for (i = IBEG; i <= IEND; i++)
-                                {
-                                        irradiation.column_density[l][k][j][i] += irradiation.column_density_offset[n];
-                                }
-                                n++;
-                        }
-
+        n = 0;
+        KDOM_LOOP(k){
+            JDOM_LOOP(j){
+                IDOM_LOOP(i){
+                    irradiation.column_density[l][k][j][i] += irradiation.column_density_offset[n];
                 }
+                n++;
+            }
         }
+    }
 }
 
