@@ -51,19 +51,17 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
  *********************************************************************** */
 {
     int i,j,k,n;
-    double x[NTRACER];
-    double Tgas, Tdust, dx;
-    double dt_s;
-    double rho, T;
+    double abundances[NTRACER];
+    double T_cgs, dr_cgs, dt_cgs, rho_cgs;
 
     DOM_LOOP(k,j,i){
-        rho = v[RHO][k][j][i]*UNIT_DENSITY;
-        Tgas = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
+        rho_cgs = v[RHO][k][j][i]*UNIT_DENSITY;
+        T_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
 
-        NTRACER_LOOP(n) x[n-TRC] = v[n][k][j][i];
+        NTRACER_LOOP(n) abundances[n-TRC] = v[n][k][j][i];
  
-        dt_s = dt*UNIT_LENGTH/UNIT_VELOCITY;
-        dx = grid->dx[IDIR][i]*UNIT_LENGTH;
+        dt_cgs = dt*UNIT_LENGTH/UNIT_VELOCITY;
+        dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
 
         // set incoming column density to the cell
         prizmo_set_radial_ncol_h2_c(&irradiation.column_density[1][k][j][i]);
@@ -73,11 +71,11 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
         prizmo_set_vertical_ncol_co_c(&irradiation.column_density[2][k][j][i]);
 
         // CALL PRIZMO
-        prizmo_evolve_rho_c(x, &rho, &Tgas, irradiation.jflux[k][j][i], &dt_s);
+        prizmo_evolve_rho_c(abundances, &rho_cgs, &T_cgs, irradiation.jflux[k][j][i], &dt_cgs);
 
-        v[PRS][k][j][i] = v[RHO][k][j][i]*Tgas/(KELVIN*g_inputParam[MU]);
+        v[PRS][k][j][i] = v[RHO][k][j][i]*T_cgs/(KELVIN*g_inputParam[MU]);
 
-        NTRACER_LOOP(n) v[n][k][j][i] = x[n-TRC];
+        NTRACER_LOOP(n) v[n][k][j][i] = abundances[n-TRC];
     }
 }
 
