@@ -52,7 +52,7 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
 {
     int i, j, k, n;
     double abundance[NTRACER];
-    double T_cgs, dr_cgs, dt_cgs;
+    double T_cgs, dt_cgs, rho_cgs;
 
     DOM_LOOP(k, j, i){
         rho_cgs = v[RHO][k][j][i]*UNIT_DENSITY;
@@ -217,7 +217,7 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
                 dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
                 temperature_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
 		
-		NTRACER_LOOP(l) x[l-TRC] = v[l][k][j][i];
+		NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
 		
 		//calculate radiation attenuation at the radial cell i
                 prizmo_rt_rho_c(abundance, &density_cgs, &temperature_cgs, jflux, &dr_cgs);
@@ -263,10 +263,10 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
 		dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
 
                 NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
-                prizmo_frac2n_c(abundance, &density, number_density);
+                prizmo_frac2n_c(abundance, &density_cgs, number_density);
                 
 		if(val == 0) {
-                    column_density += density/mpart*dr_cgs;
+                    column_density += density_cgs/mpart*dr_cgs;
                 } else if (val == 1) {
                     column_density += number_density[IDX_CHEM_H2-TRC] * dr_cgs;
                 } else {
