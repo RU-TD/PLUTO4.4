@@ -202,18 +202,19 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
     // TODO: restrict this calculation only for spherical coordinates.
     for (rank=0; rank<grid->nproc[IDIR]; rank++){
       if(prank == rank){
-        KTOT_LOOP(k){
-          JTOT_LOOP(j){
+        KDOM_LOOP(k){
+          JDOM_LOOP(j){
             if(rank == 0){
               //initialize radiation fluxes at r=0 to their initial value
               NPHOTO_LOOP(n) {
                 jflux[n] = irradiation.jflux0[n];
-                irradiation.jflux[k][j][0][n] = irradiation.jflux0[n];
+                irradiation.jflux[k][j][1][n] = irradiation.jflux0[n];
               }
 	    }
 	    else MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, &status);
 
-            for (i = 0; i < IEND; i++){
+            //IDOM_LOOP(i){
+            for (i=1; i<=IEND-1; i++){
                 density = v[RHO][k][j][i] * UNIT_DENSITY;
                 NTRACER_LOOP(l) x[l-TRC] = v[l][k][j][i];
                 dr = grid->dx[IDIR][i]*UNIT_LENGTH;
@@ -221,7 +222,7 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
 		//calculate radiation attenuation at cell i
                 prizmo_rt_rho_c(x, &density, &Tgas, jflux, &dr);
 		//assign attenuated radiation flux to the next radial cell
-		NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
+                NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
             }
 	    if (rank != grid->nproc[IDIR]-1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
           }
@@ -287,11 +288,11 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
                     l++;
                 }
             }
-            MPI_Send(irradiation.data_buffer,NX2*NX3,MPI_DOUBLE,irradiation.neighbour.send_rank,0,MPI_COMM_WORLD);
+            MPI_Send(irradiation.data_buffer, NX2*NX3, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
         }
         else
         {
-            MPI_Recv(irradiation.column_density_offset ,NX2*NX3, MPI_DOUBLE, irradiation.neighbour.receive_rank, 0, MPI_COMM_WORLD, &status);
+            MPI_Recv(irradiation.column_density_offset, NX2*NX3, MPI_DOUBLE, irradiation.neighbour.receive_rank, 0, MPI_COMM_WORLD, &status);
 
             l = 0;
             i = IEND+1;
@@ -304,7 +305,7 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
 
             if(irradiation.neighbour.send_rank != -1)
             {
-                MPI_Send(irradiation.data_buffer,NX2*NX3,MPI_DOUBLE,irradiation.neighbour.send_rank,0,MPI_COMM_WORLD);
+                MPI_Send(irradiation.data_buffer, NX2*NX3, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
             }
 
         }
