@@ -5,7 +5,6 @@ extern void prizmo_set_radial_ncol_co_c(double *);
 extern void prizmo_set_vertical_ncol_co_c(double *);
 extern void prizmo_evolve_rho_c(double *, double *, double *, double *, double *);
 extern void prizmo_frac2n_c(double *, double *, double *);
-extern void prizmo_n2frac_c(double *, double *, double *);
 extern void prizmo_rt_rho_c(double *, double *, double *, double *, double *);
 
 /* ********************************************************************* */
