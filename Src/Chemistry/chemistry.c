@@ -50,19 +50,17 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
  *  Chemistry
  *********************************************************************** */
 {
-    int i,j,k,n;
-    double abundances[NTRACER];
-    double T_cgs, dr_cgs, dt_cgs, rho_cgs;
+    int i, j, k, n;
+    double abundance[NTRACER];
+    double T_cgs, dr_cgs, dt_cgs;
 
-    DOM_LOOP(k,j,i){
+    DOM_LOOP(k, j, i){
         rho_cgs = v[RHO][k][j][i]*UNIT_DENSITY;
         T_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
-
-        NTRACER_LOOP(n) abundances[n-TRC] = v[n][k][j][i];
- 
         dt_cgs = dt*UNIT_LENGTH/UNIT_VELOCITY;
-        dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
 
+        NTRACER_LOOP(n) abundance[n-TRC] = v[n][k][j][i];
+ 
         // set incoming column density to the cell
         prizmo_set_radial_ncol_h2_c(&irradiation.column_density[1][k][j][i]);
         prizmo_set_radial_ncol_co_c(&irradiation.column_density[2][k][j][i]);
@@ -71,11 +69,11 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
         prizmo_set_vertical_ncol_co_c(&irradiation.column_density[2][k][j][i]);
 
         // CALL PRIZMO
-        prizmo_evolve_rho_c(abundances, &rho_cgs, &T_cgs, irradiation.jflux[k][j][i], &dt_cgs);
+        prizmo_evolve_rho_c(abundance, &rho_cgs, &T_cgs, irradiation.jflux[k][j][i], &dt_cgs);
 
         v[PRS][k][j][i] = v[RHO][k][j][i]*T_cgs/(KELVIN*g_inputParam[MU]);
 
-        NTRACER_LOOP(n) v[n][k][j][i] = abundances[n-TRC];
+        NTRACER_LOOP(n) v[n][k][j][i] = abundance[n-TRC];
     }
 }
 
@@ -192,8 +190,8 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
  *********************************************************************** */
 {
     int k, j, i, l, n, rank;
-    double density, Tgas, dr;
-    double x[NTRACER];
+    double density_cgs, temperature_cgs, dr_cgs;
+    double abundance[NTRACER];
     double jflux[NPHOTO];
     MPI_Status status;
  
@@ -215,12 +213,15 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
 
             //IDOM_LOOP(i){
             for (i=1; i<=IEND-1; i++){
-                density = v[RHO][k][j][i] * UNIT_DENSITY;
-                NTRACER_LOOP(l) x[l-TRC] = v[l][k][j][i];
-                dr = grid->dx[IDIR][i]*UNIT_LENGTH;
-                Tgas = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
-		//calculate radiation attenuation at cell i
-                prizmo_rt_rho_c(x, &density, &Tgas, jflux, &dr);
+                density_cgs = v[RHO][k][j][i] * UNIT_DENSITY;
+                dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
+                temperature_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
+		
+		NTRACER_LOOP(l) x[l-TRC] = v[l][k][j][i];
+		
+		//calculate radiation attenuation at the radial cell i
+                prizmo_rt_rho_c(abundance, &density_cgs, &temperature_cgs, jflux, &dr_cgs);
+		
 		//assign attenuated radiation flux to the next radial cell
                 NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
             }
@@ -241,34 +242,35 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
 {
     int k, j, i, l;
     double column_density;
-    double density, dr;
+    double density_cgs, dr_cgs;
     double mpart = g_inputParam[GAMMA_EOS]*CONST_amu;
-    double x[NTRACER], n[NTRACER];
+    double abundance[NTRACER], number_density[NTRACER];
     MPI_Status status;
 
     NTRACER_LOOP(l){
-        x[l-TRC] = 0.;
-        n[l-TRC] = 0.;
+        abundance[l-TRC] = 0.;
+        number_density[l-TRC] = 0.;
     }
 
     KDOM_LOOP(k){
         JDOM_LOOP(j){
-            //initialize column density
+            //initialize column density for each radial sweep
             column_density = 0.0;
             irradiation.column_density[val][k][j][IBEG] = column_density;
 
             IDOM_LOOP(i){
-                //calculate column density contribution in the current domain
-                density = v[RHO][k][j][i] * UNIT_DENSITY;
-                NTRACER_LOOP(l) x[l-TRC] = v[l][k][j][i];
-                prizmo_frac2n_c(x, &density, n);
-                dr = grid->dx[IDIR][i]*UNIT_LENGTH;
-                if(val == 0) {
-                    column_density += density/mpart*dr;
+                density_cgs = v[RHO][k][j][i] * UNIT_DENSITY;
+		dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
+
+                NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
+                prizmo_frac2n_c(abundance, &density, number_density);
+                
+		if(val == 0) {
+                    column_density += density/mpart*dr_cgs;
                 } else if (val == 1) {
-                    column_density += n[IDX_CHEM_H2-TRC] * dr;
+                    column_density += number_density[IDX_CHEM_H2-TRC] * dr_cgs;
                 } else {
-                    column_density += n[IDX_CHEM_CO-TRC] * dr;
+                    column_density += number_density[IDX_CHEM_CO-TRC] * dr_cgs;
                 }
                 irradiation.column_density[val][k][j][i+1] = column_density;
             }
