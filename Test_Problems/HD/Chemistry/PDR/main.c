@@ -281,6 +281,8 @@ int main (int argc, char *argv[])
     #else
     if (g_stepNumber%2 == 1) g_dt = NextTimeStep(&Dts, &runtime, grd);
     #endif
+#else
+    g_dt = 1.1*g_dt;
 #endif
     g_stepNumber++;
     first_step = 0;
@@ -392,7 +394,7 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
   g_maxMach        = 0.0;
   g_maxRiemannIter = 0;
   g_maxRootIter    = 0;
-#ifndef DISABLE_HYDRO
+
   #if COOLING != NO 
   if ((g_stepNumber-1)%2 == 1){ 
   #endif
@@ -447,6 +449,7 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
    3. Perform Strang Splitting between hydro and source
    -------------------------------------------------------- */
 
+#ifndef DISABLE_HYDRO
   if (nretry == 0) TOT_LOOP(k,j,i) d->flag[k][j][i] = 0;
 
   #ifdef FARGO
@@ -460,6 +463,7 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
     SplitSource (d, g_dt, Dts, grid);
     err = AdvanceStep (d, Dts, grid);
   }
+#endif
 
 /* --------------------------------------------------------
    4. Fail-safe procedure:
@@ -526,16 +530,17 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
 /* --------------------------------------------------------
    5. Half step for GLM_Source
    -------------------------------------------------------- */
-
-#ifdef GLM_MHD  /* -- GLM source for dt/2 -- */
+#ifndef DISABLE_HYDRO
+ #ifdef GLM_MHD  /* -- GLM source for dt/2 -- */
   GLM_Source (d, 0.5*g_dt, grid);
+ #endif
 #endif
-#endif
-#if CHEMISTRY != NO
+
+ #if CHEMISTRY != NO
   Boundary(d, ALL_DIR, grid);
   Chemistry(d->Vc, g_dt, grid);
-  g_dt = 1.1*g_dt;
-#endif
+  //g_dt = 1.1*g_dt;
+ #endif
   return 0; /* -- ok, step achieved -- */
 }
 

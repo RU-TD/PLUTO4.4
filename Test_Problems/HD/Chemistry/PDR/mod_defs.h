@@ -173,13 +173,9 @@ typedef struct IRRADIATION_DATA
         double**** jflux;
 	double*    jflux0;
         double*    data_buffer;
-	double*    jflux_buffer;
         double*    column_density_offset;
-	double*    jflux_offset;
 
 } IrradiationData;
-
-void initialize_ColumnDensity(Grid *grid);
 
 Riemann_Solver TwoShock_Solver, LF_Solver, Roe_Solver, HLL_Solver,
                HLLC_Solver, RusanovDW_Solver;
