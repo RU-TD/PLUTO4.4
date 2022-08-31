@@ -219,6 +219,8 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
  * direction since each domain has to know the attenutation at its inner 
  * radial boundary before starting.
  *
+ * TODO: restrict this calculation only for spherical coordinates.
+ *
  * \param[in]     v       Data Array containing conservative variables
  * \param[in]     grid    pointer to array of Grid structures
  *
@@ -230,24 +232,23 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
     double jflux[NPHOTO];
     MPI_Status status;
  
-    // The radiation attenuation calculation needs to run in serial because 
-    // it depends on the value of the previous cell.
-    // TODO: restrict this calculation only for spherical coordinates.
     for (rank=0; rank<grid->nproc[IDIR]; rank++){
       if(prank == rank){
         KDOM_LOOP(k){
           JDOM_LOOP(j){
             if(rank == 0){
-              //initialize radiation fluxes at r=0 to their initial value
+              //initialize radiation fluxes
               NPHOTO_LOOP(n) {
                 jflux[n] = irradiation.jflux0[n];
-                irradiation.jflux[k][j][1][n] = irradiation.jflux0[n];
+                irradiation.jflux[k][j][IBEG][n] = irradiation.jflux0[n];
               }
 	    }
-	    else MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, &status);
+	    else {
+              MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, &status);
+	      NPHOTO_LOOP(n) irradiation.jflux[k][j][IBEG][n] = jflux[n];
+	    }
 
-            //IDOM_LOOP(i){
-            for (i=1; i<=IEND-1; i++){
+            IDOM_LOOP(i){
                 density_cgs = v[RHO][k][j][i] * UNIT_DENSITY;
                 dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
                 temperature_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
