@@ -539,7 +539,6 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
  #if CHEMISTRY != NO
   Boundary(d, ALL_DIR, grid);
   Chemistry(d->Vc, g_dt, grid);
-  //g_dt = 1.1*g_dt;
  #endif
   return 0; /* -- ok, step achieved -- */
 }

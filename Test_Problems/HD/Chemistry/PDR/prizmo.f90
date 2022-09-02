@@ -141,33 +141,6 @@ contains
 
   end subroutine prizmo_rt_rho
 
-  ! **********************
-  ! convert number densities to fractions
-  ! x(prizmo_nspecies): species abundances, 1/cm3
-  ! returns: xx(prizmo_nspecies), species mass fractions, no dimensions
-  function prizmo_n2frac(x) result(xx)
-    implicit none
-    real*8,intent(in)::x(nspecies)
-    real*8::xx(nspecies)
-
-    xx = x * masses / sum(x * masses)
-
-  end function prizmo_n2frac
-
-  ! **********************
-  ! convert fractions to number densities
-  ! xx(prizmo_nspecies): mass fractions, no dimension
-  ! rho: gas mass density, g/cm3
-  ! returns: x(prizmo_nspecies), species abundances, 1/cm3
-  function prizmo_frac2n(xx, rho) result(x)
-    implicit none
-    real*8,intent(in)::xx(nspecies), rho
-    real*8::x(nspecies)
-
-    x = xx * rho / masses
-
-  end function prizmo_frac2n
-
   ! **************
   function prizmo_get_rho(x) result(rho)
     implicit none

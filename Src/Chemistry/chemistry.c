@@ -309,7 +309,7 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
                 NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
                 prizmo_frac2n_c(abundance, &density_cgs, number_density);
                 
-		if(val == 0) {
+		if (val == 0) {
                     column_density += density_cgs/mpart*dr_cgs;
                 } else if (val == 1) {
                     column_density += number_density[IDX_CHEM_H2-TRC] * dr_cgs;

@@ -17,6 +17,7 @@
 
 extern void prizmo_get_rho_c(double *, double *);
 extern void prizmo_n2frac_c(double *, double *);
+extern void prizmo_set_d2g_c(double);
 
 /* ********************************************************************* */
 void Init (double *us, double x1, double x2, double x3)
@@ -33,6 +34,8 @@ void Init (double *us, double x1, double x2, double x3)
   #endif
 
   us[VX1] = 0.0;
+
+  prizmo_set_d2g_c(1.e-2);
 
   NTRACER_LOOP(nv) {
     n[nv-TRC] = 0.;
