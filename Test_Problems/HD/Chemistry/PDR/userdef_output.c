@@ -13,15 +13,15 @@ void ComputeUserVar (const Data *d, Grid *grid)
  ***************************************************************** */
 {
     int i, j, k;
-    double ***cd, ***cdh2, ***cdtot;
+    double ***cd, ***cdH2, ***cdCO;
     cd = GetUserVar("cd");
-    cdh2 = GetUserVar("cdh2");
-    cdtot = GetUserVar("cdtot");
+    cdh2 = GetUserVar("cdH2");
+    cdco = GetUserVar("cdCO");
 
     DOM_LOOP(k,j,i){
         cd[k][j][i] = irradiation.column_density[0][k][j][i];
-	cdh2[k][j][i] = irradiation.column_density[1][k][j][i];
-	cdtot[k][j][i] = irradiation.column_density[2][k][j][i];
+	cdH2[k][j][i] = irradiation.column_density[1][k][j][i];
+	cdCO[k][j][i] = irradiation.column_density[2][k][j][i];
     }
 }
 /* ************************************************************* */
