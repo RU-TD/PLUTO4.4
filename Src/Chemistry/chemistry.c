@@ -61,11 +61,11 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
 {
     int i, j, k, n;
     double abundance[NTRACER];
-    double T_cgs, dt_cgs, density_cgs;
+    double temperature_cgs, dt_cgs, density_cgs;
 
     DOM_LOOP(k, j, i){
         density_cgs = v[RHO][k][j][i]*UNIT_DENSITY;
-        T_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
+        temperature_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
         dt_cgs = dt*UNIT_LENGTH/UNIT_VELOCITY;
 
         NTRACER_LOOP(n) abundance[n-TRC] = v[n][k][j][i];
@@ -78,10 +78,10 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
         prizmo_set_vertical_ncol_co_c(&irradiation.column_density[2][k][j][i]);
 
         // update chemical abundances, temperature and radiation flux
-        prizmo_evolve_rho_c(abundance, &density_cgs, &T_cgs, 
+        prizmo_evolve_rho_c(abundance, &density_cgs, &temperature_cgs, 
 			irradiation.jflux[k][j][i], &dt_cgs);
 
-        v[PRS][k][j][i] = v[RHO][k][j][i]*T_cgs/(KELVIN*g_inputParam[MU]);
+        v[PRS][k][j][i] = v[RHO][k][j][i]*temperature_cgs/(KELVIN*g_inputParam[MU]);
 
         NTRACER_LOOP(n) v[n][k][j][i] = abundance[n-TRC];
     }
