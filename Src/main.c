@@ -163,9 +163,7 @@ int main (int argc, char *argv[])
    ----------------------------------------------------- */
 
 #if CHEMISTRY != NO
-  print("start prizmo_init\n");
   prizmo_init_c();
-  print("finished\n");
 #endif
 
 /* =====================================================================
@@ -277,13 +275,15 @@ int main (int argc, char *argv[])
          Do it every two steps if cooling or dimensional
          splitting are used.
      ------------------------------------------------------ */
-
+#ifndef DISABLE_HYDRO
     #if (COOLING == NO) 
     g_dt = NextTimeStep(&Dts, &runtime, grd);
     #else
     if (g_stepNumber%2 == 1) g_dt = NextTimeStep(&Dts, &runtime, grd);
     #endif
-
+#else
+    g_dt = 1.1*g_dt;
+#endif
     g_stepNumber++;
     first_step = 0;
   }
@@ -449,6 +449,7 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
    3. Perform Strang Splitting between hydro and source
    -------------------------------------------------------- */
 
+#ifndef DISABLE_HYDRO
   if (nretry == 0) TOT_LOOP(k,j,i) d->flag[k][j][i] = 0;
 
   #ifdef FARGO
@@ -462,6 +463,12 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
     SplitSource (d, g_dt, Dts, grid);
     err = AdvanceStep (d, Dts, grid);
   }
+#else
+ #if (DISABLE_HYDRO == YES) && (CHEMISTRY == YES)
+  Boundary(d, ALL_DIR, grid);
+  Chemistry(d->Vc, g_dt, grid);
+ #endif
+#endif
 
 /* --------------------------------------------------------
    4. Fail-safe procedure:
@@ -474,7 +481,7 @@ int Integrate (Data *d, timeStep *Dts, Grid *grid)
 
   if (err > 0) {
     int invalid_zones=0;
-    if (nretry >= 1){
+    if (nretry >= 10){
       printLog ("! Integrate(): solution did not succeed [nretry = %d]\n",nretry);
       QUIT_PLUTO(1); 
     }
