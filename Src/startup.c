@@ -15,6 +15,7 @@
 */
 /* ///////////////////////////////////////////////////////////////////// */
 #include "pluto.h"
+
 double FieldAverage(double, double, Grid *, int, int);
 
 /* ********************************************************************* */
@@ -68,6 +69,10 @@ void Startup (Data *d, Grid *grid)
    1. Assign initial conditions point by point using
       primitive variables.
    ------------------------------------------------------ */
+
+#if CHEMISTRY == YES
+  initialize_Microphysics(grid);
+#endif
 
   KTOT_LOOP(k) { 
   JTOT_LOOP(j) { 
