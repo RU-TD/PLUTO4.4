@@ -7,8 +7,7 @@
 pluto:                              # Default target
 
 ARCH         = Darwin.mpicc.defs
-#PLUTO_DIR    = ./home/moon/picogna/Codes/pluto_chemistry/PLUTO4.4
-PLUTO_DIR    = ~/
+PLUTO_DIR    = ./home/moon/picogna/Codes/pluto_chemistry/PLUTO4.4
 SRC          = $(PLUTO_DIR)/Src
 INCLUDE_DIRS = -I. -I$(SRC)
 VPATH        = ./:$(SRC)/New:$(SRC):$(SRC)/Time_Stepping:$(SRC)/States
