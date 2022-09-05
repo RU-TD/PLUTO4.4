@@ -1,20 +1,17 @@
 name: C/C++ CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: ./Test_Problems/HD/Chemistry/PDR/
     strategy:
       matrix:
         mpi: [ 'mpich', 'openmpi' ]
-
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -22,8 +19,6 @@ jobs:
       uses: mpi4py/setup-mpi@v1
       with:
          mpi: ${{ matrix.mpi }}
-    - name: PDR test
-      run: cd Test_Problems/HD/Chemistry/PDR/
     - name: make
       run: make
     - name: run
