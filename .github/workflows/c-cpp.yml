@@ -6,9 +6,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Test_Problems/HD/Chemistry/PDR/
     strategy:
       matrix:
         mpi: [ 'mpich', 'openmpi' ]
@@ -20,6 +17,10 @@ jobs:
       with:
          mpi: ${{ matrix.mpi }}
     - name: make
-      run: make
+      run: |
+        cd Test_Problems/HD/Chemistry/PDR/
+        make
     - name: run
-      run: mpirun -np 2 ./pluto
+      run: |
+        cd Test_Problems/HD/Chemistry/PDR/
+        mpirun -np 2 ./pluto
