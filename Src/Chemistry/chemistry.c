@@ -231,12 +231,12 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
     double abundance[NTRACER];
     double jflux[NPHOTO];
     MPI_Status status;
- 
-    for (rank=0; rank<grid->nproc[IDIR]; rank++){
+
+    for (rank=0; g_nprocs; rank++){
       if(prank == rank){
         KDOM_LOOP(k){
           JDOM_LOOP(j){
-            if(rank == 0){
+            if(irradiation.neighbour.receive_rank == -1 && irradiation.neighbour.send_rank != -1){ //no neighbor in between the star and the current domain
               //initialize radiation fluxes
               NPHOTO_LOOP(n) {
                 jflux[n] = irradiation.jflux0[n];
@@ -244,7 +244,7 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
               }
 	    }
 	    else {
-              MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, &status);
+              MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.receive_rank, 0, MPI_COMM_WORLD, &status);
 	      NPHOTO_LOOP(n) irradiation.jflux[k][j][IBEG][n] = jflux[n];
 	    }
 
@@ -261,7 +261,7 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
 		//assign attenuated radiation flux to the next radial cell
                 NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
             }
-	    if (rank != grid->nproc[IDIR]-1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+	    if (rank != grid->nproc[IDIR]-1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
           }
 	}
       }
