@@ -103,7 +103,7 @@ void read_jflux()
     fout = fopen("runtime_data/radiation_field.dat", "r");
     NPHOTO_LOOP(n) {
         fscanf(fout, "%le", &irradiation.jflux0[n]);
-        irradiation.jflux0[n] *= 2.*CONST_PI*Jscale;
+        irradiation.jflux0[n] *= 4.*CONST_PI*Jscale;
     }
     fclose(fout);
 }
@@ -261,7 +261,7 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
 		//assign attenuated radiation flux to the next radial cell
                 NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
             }
-	    if (rank != grid->nproc[IDIR]-1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
+	    if(irradiation.neighbour.send_rank != -1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
           }
 	}
       }
