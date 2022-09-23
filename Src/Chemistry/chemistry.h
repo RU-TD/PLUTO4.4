@@ -22,4 +22,3 @@ void   calculate_Attenuation_perDomain(Data_Arr v, Grid *grid);
 void   calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val);
 void   calculate_ColumnDensity(Data_Arr v, Grid *grid);
 void   calculate_Attenuation(Data_Arr v, Grid *grid);
-void   read_jflux();

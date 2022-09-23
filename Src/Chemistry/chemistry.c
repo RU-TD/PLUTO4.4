@@ -88,27 +88,6 @@ void Chemistry(Data_Arr v, double dt, Grid *grid)
 }
 
 /*********************************************************************** */
-void read_jflux()
-/*
- * Import radiation flux at 1 au from input file
- *
- *********************************************************************** */
-{
-    //TODO: verify that the file exist and print en error statement otherwise
-    FILE *fout;
-    double Jscale = 1.e1;
-    int n;
-
-    // load radiation at 1 AU
-    fout = fopen("runtime_data/radiation_field.dat", "r");
-    NPHOTO_LOOP(n) {
-        fscanf(fout, "%le", &irradiation.jflux0[n]);
-        irradiation.jflux0[n] *= 4.*CONST_PI*Jscale;
-    }
-    fclose(fout);
-}
-
-/*********************************************************************** */
 void find_CommunicationNeighbour(int current_rank, 
 		LocalDomainInfo *domain_info_array, int nproc, 
 		CommunicationNeighbour* cn)
@@ -232,42 +211,41 @@ void calculate_Attenuation(Data_Arr v, Grid *grid)
     double jflux[NPHOTO];
     MPI_Status status;
 
-    for (rank=0; g_nprocs; rank++){
-      if(prank == rank){
-        KDOM_LOOP(k){
-          JDOM_LOOP(j){
-            if(irradiation.neighbour.receive_rank == -1 && irradiation.neighbour.send_rank != -1){ //no neighbor in between the star and the current domain
-              //initialize radiation fluxes
-              NPHOTO_LOOP(n) {
-                jflux[n] = irradiation.jflux0[n];
-                irradiation.jflux[k][j][IBEG][n] = irradiation.jflux0[n];
-              }
-	    }
-	    else {
-              MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.receive_rank, 0, MPI_COMM_WORLD, &status);
-	      NPHOTO_LOOP(n) irradiation.jflux[k][j][IBEG][n] = jflux[n];
-	    }
+    for (rank=0; rank<g_nprocs; rank++){
+        if(prank == rank){
+            KDOM_LOOP(k){
+                JDOM_LOOP(j){
+                    if(irradiation.neighbour.receive_rank == -1 && irradiation.neighbour.send_rank != -1){ //no neighbor in between the star and the current domain
+                        //initialize radiation fluxes
+                        NPHOTO_LOOP(n) {
+                            jflux[n] = irradiation.jflux0[n];
+                            irradiation.jflux[k][j][IBEG][n] = irradiation.jflux0[n];
+                        }
+	                }
+	                else {
+                        MPI_Recv(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.receive_rank, 0, MPI_COMM_WORLD, &status);
+	                    NPHOTO_LOOP(n) irradiation.jflux[k][j][IBEG][n] = jflux[n];
+	                }
 
-            IDOM_LOOP(i){
-                density_cgs = v[RHO][k][j][i] * UNIT_DENSITY;
-                dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
-                temperature_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
+                    IDOM_LOOP(i){
+                        density_cgs = v[RHO][k][j][i] * UNIT_DENSITY;
+                        dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
+                        temperature_cgs = v[PRS][k][j][i]/v[RHO][k][j][i]*(KELVIN*g_inputParam[MU]);
 		
-		NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
+		                NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
 		
-		//calculate radiation attenuation at the radial cell i
-                prizmo_rt_rho_c(abundance, &density_cgs, &temperature_cgs, jflux, &dr_cgs);
+		                //calculate radiation attenuation at the radial cell i
+                        prizmo_rt_rho_c(abundance, &density_cgs, &temperature_cgs, jflux, &dr_cgs);
 		
-		//assign attenuated radiation flux to the next radial cell
-                NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
-            }
-	    if(irradiation.neighbour.send_rank != -1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
-          }
-	}
-      }
-      MPI_Barrier(MPI_COMM_WORLD);
+		                //assign attenuated radiation flux to the next radial cell
+                        NPHOTO_LOOP(n) irradiation.jflux[k][j][i+1][n] = jflux[n];
+                    }
+	                if(irradiation.neighbour.send_rank != -1) MPI_Send(jflux, NPHOTO, MPI_DOUBLE, irradiation.neighbour.send_rank, 0, MPI_COMM_WORLD);
+                }
+	        }
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
     }
-  
 }
 
 /*********************************************************************** */
@@ -304,12 +282,12 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
 
             IDOM_LOOP(i){
                 density_cgs = v[RHO][k][j][i] * UNIT_DENSITY;
-		dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
+		        dr_cgs = grid->dx[IDIR][i]*UNIT_LENGTH;
 
                 NTRACER_LOOP(l) abundance[l-TRC] = v[l][k][j][i];
                 prizmo_frac2n_c(abundance, &density_cgs, number_density);
                 
-		if (val == 0) {
+		        if (val == 0) {
                     column_density += density_cgs/mpart*dr_cgs;
                 } else if (val == 1) {
                     column_density += number_density[IDX_CHEM_H2-TRC] * dr_cgs;
@@ -347,7 +325,7 @@ void calculate_ColumnDensity_perDomain(Data_Arr v, Grid *grid, int val)
                 JDOM_LOOP(j){
                     irradiation.data_buffer[l] = irradiation.column_density_offset[l] + irradiation.column_density[val][k][j][i];
                     l++;
-               }
+                }
             }
 
             if(irradiation.neighbour.send_rank != -1)

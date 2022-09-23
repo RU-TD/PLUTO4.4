@@ -1,0 +1,315 @@
+H + CH -> C + H2                                                                                    
+H + CH2 -> CH + H2                                                                                  
+H + CH3 -> CH2 + H2                                                                                 
+H + CH4 -> CH3 + H2                                                                                 
+H + OH -> O + H2                                                                                    
+H + H2O -> OH + H2                                                                                  
+H + CO -> OH + C                                                                                    
+H + O2 -> OH + O                                                                                    
+H2 + C -> CH + H                                                                                    
+H2 + CH -> CH2 + H                                                                                  
+H2 + CH2 -> CH3 + H                                                                                 
+H2 + CH3 -> CH4 + H                                                                                 
+H2 + O -> OH + H                                                                                    
+H2 + OH -> H2O + H                                                                                  
+H2 + O2 -> OH + OH                                                                                  
+C + CH2 -> CH + CH                                                                                  
+C + OH -> O + CH                                                                                    
+C + OH -> CO + H                                                                                    
+C + O2 -> CO + O                                                                                    
+CH + O -> OH + C                                                                                    
+CH + O -> CO + H                                                                                    
+CH + CH4 -> CH3 + CH2                                                                               
+CH + O2 -> CO + OH                                                                                  
+CH2 + CH2 -> CH3 + CH                                                                               
+CH2 + O -> OH + CH                                                                                  
+CH2 + O -> CO + H + H                                                                               
+CH2 + O -> CO + H2                                                                                  
+CH2 + CH4 -> CH3 + CH3                                                                              
+CH2 + OH -> O + CH3                                                                                 
+CH2 + OH -> H2O + CH                                                                                
+CH2 + O2 -> CO + H2O                                                                                
+CH3 + CH3 -> CH4 + CH2                                                                              
+CH3 + OH -> CH4 + O                                                                                 
+CH3 + OH -> H2O + CH2                                                                               
+CH3 + H2O -> OH + CH4                                                                               
+O + CH4 -> OH + CH3                                                                                 
+O + OH -> O2 + H                                                                                    
+O + H2O -> OH + OH                                                                                  
+CH4 + OH -> H2O + CH3                                                                               
+OH + OH -> H2O + O                                                                                  
+H + CH+ -> C+ + H2                                                                                  
+H + CH2+ -> CH+ + H2                                                                                
+H + CH3+ -> CH2+ + H2                                                                               
+H2 + He+ -> He + H+ + H                                                                             
+H2 + C+ -> CH+ + H                                                                                  
+H2 + CH+ -> CH2+ + H                                                                                
+He+ + CO -> O+ + C + He                                                                             
+C+ + OH -> CO + H+                                                                                  
+H+ + H2 -> H2+ + H                                                                                  
+H + He+ -> He + H+                                                                                  
+H + O+ -> O + H+                                                                                    
+H+ + O -> O+ + H                                                                                    
+H+ + H2O -> H2O+ + H                                                                                
+H+ + O2 -> O2+ + H                                                                                  
+H2 + He+ -> He + H2+                                                                                
+He+ + C -> C+ + He                                                                                  
+O+ + CO -> CO+ + O                                                                                  
+H2+ + E -> H + H                                                                                    
+H3+ + E -> H + H + H                                                                                
+H3+ + E -> H2 + H                                                                                   
+CH+ + E -> C + H                                                                                    
+CH2+ + E -> CH + H                                                                                  
+CH2+ + E -> C + H + H                                                                               
+CH2+ + E -> C + H2                                                                                  
+CH3+ + E -> CH2 + H                                                                                 
+CH3+ + E -> CH + H2                                                                                 
+CH3+ + E -> CH + H + H                                                                              
+CH3+ + E -> C + H2 + H                                                                              
+CH4+ + E -> CH3 + H                                                                                 
+CH4+ + E -> CH2 + H + H                                                                             
+OH+ + E -> O + H                                                                                    
+CH5+ + E -> CH3 + H2                                                                                
+CH5+ + E -> CH4 + H                                                                                 
+H2O+ + E -> O + H + H                                                                               
+H2O+ + E -> O + H2                                                                                  
+H2O+ + E -> OH + H                                                                                  
+H3O+ + E -> O + H2 + H                                                                              
+H3O+ + E -> OH + H + H                                                                              
+H3O+ + E -> OH + H2                                                                                 
+H3O+ + E -> H2O + H                                                                                 
+CO+ + E -> O + C                                                                                    
+HCO+ + E -> CO + H                                                                                  
+O2+ + E -> O + O                                                                                    
+CH3+ + E -> CH3                                                                                     
+H+ + H -> H2+                                                                                       
+H + C -> CH                                                                                         
+H + C+ -> CH+                                                                                       
+H + O -> OH                                                                                         
+H + OH -> H2O                                                                                       
+H2 + C -> CH2                                                                                       
+H2 + C+ -> CH2+                                                                                     
+H2 + CH -> CH3                                                                                      
+H2 + CH3+ -> CH5+                                                                                   
+C + O -> CO                                                                                         
+C+ + O -> CO+                                                                                       
+O + O -> O2                                                                                         
+H + H2 -> H + H + H                                                                                 
+H + CH -> C + H + H                                                                                 
+H + OH -> O + H + H                                                                                 
+H + H2O -> OH + H + H                                                                               
+H + O2 -> O + O + H                                                                                 
+H2 + E -> H + H + E                                                                                 
+H2 + H2 -> H2 + H + H                                                                               
+H2 + CH -> C + H2 + H                                                                               
+H2 + OH -> O + H2 + H                                                                               
+H2 + H2O -> OH + H2 + H                                                                             
+H2 + O2 -> O + O + H2                                                                               
+CH + O -> HCO+ + E                                                                                  
+H + H -> H2                                                                                         
+H+ + CH2 -> CH+ + H2                                                                                
+H+ + CH4 -> CH3+ + H2                                                                               
+H + CH4+ -> CH3+ + H2                                                                               
+H + CH5+ -> CH4+ + H2                                                                               
+H2+ + H2 -> H3+ + H                                                                                 
+H2+ + C -> CH+ + H                                                                                  
+H2+ + CH -> CH2+ + H                                                                                
+H2+ + CH2 -> CH3+ + H                                                                               
+H2 + CH2+ -> CH3+ + H                                                                               
+H2+ + O -> OH+ + H                                                                                  
+H2 + O+ -> OH+ + H                                                                                  
+H2+ + CH4 -> CH5+ + H                                                                               
+H2 + CH4+ -> CH5+ + H                                                                               
+H2+ + CH4 -> CH3+ + H2 + H                                                                          
+H2+ + OH -> H2O+ + H                                                                                
+H2 + OH+ -> H2O+ + H                                                                                
+H2+ + H2O -> H3O+ + H                                                                               
+H2 + H2O+ -> H3O+ + H                                                                               
+H2+ + CO -> HCO+ + H                                                                                
+H2 + CO+ -> HCO+ + H                                                                                
+H3+ + C -> CH+ + H2                                                                                 
+H3+ + CH -> CH2+ + H2                                                                               
+H3+ + CH2 -> CH3+ + H2                                                                              
+H3+ + CH3 -> CH4+ + H2                                                                              
+H3+ + O -> OH+ + H2                                                                                 
+H3+ + CH4 -> CH5+ + H2                                                                              
+H3+ + OH -> H2O+ + H2                                                                               
+H3+ + H2O -> H3O+ + H2                                                                              
+H3+ + CO -> HCO+ + H2                                                                               
+He+ + CH -> C+ + He + H                                                                             
+He+ + CH2 -> C+ + He + H2                                                                           
+He+ + CH2 -> CH+ + He + H                                                                           
+He+ + CH3 -> CH+ + He + H2                                                                          
+He+ + CH4 -> CH+ + He + H2 + H                                                                      
+He+ + CH4 -> CH2+ + He + H2                                                                         
+He+ + CH4 -> CH3 + He + H+                                                                          
+He+ + CH4 -> CH3+ + He + H                                                                          
+He+ + OH -> O+ + He + H                                                                             
+He+ + H2O -> OH + He + H+                                                                           
+He+ + H2O -> OH+ + He + H                                                                           
+He+ + CO -> O + C+ + He                                                                             
+He+ + O2 -> O+ + O + He                                                                             
+C + OH+ -> O + CH+                                                                                  
+C+ + OH -> CO+ + H                                                                                  
+C + CH5+ -> CH4 + CH+                                                                               
+C + H2O+ -> OH + CH+                                                                                
+C+ + H2O -> HCO+ + H                                                                                
+C + H3O+ -> HCO+ + H2                                                                               
+C + HCO+ -> CO + CH+                                                                                
+C+ + O2 -> CO+ + O                                                                                  
+C+ + O2 -> CO + O+                                                                                  
+C + O2+ -> CO+ + O                                                                                  
+CH+ + O -> CO+ + H                                                                                  
+CH + O+ -> CO+ + H                                                                                  
+CH + OH+ -> O + CH2+                                                                                
+CH+ + OH -> CO+ + H2                                                                                
+CH + CH5+ -> CH4 + CH2+                                                                             
+CH+ + H2O -> H3O+ + C                                                                               
+CH + H2O+ -> OH + CH2+                                                                              
+CH+ + H2O -> HCO+ + H2                                                                              
+CH + H3O+ -> H2O + CH2+                                                                             
+CH + CO+ -> HCO+ + C                                                                                
+CH + HCO+ -> CO + CH2+                                                                              
+CH+ + O2 -> CO+ + OH                                                                                
+CH+ + O2 -> HCO+ + O                                                                                
+CH + O2+ -> HCO+ + O                                                                                
+CH2+ + O -> HCO+ + H                                                                                
+CH2 + OH+ -> O + CH3+                                                                               
+CH2 + CH5+ -> CH4 + CH3+                                                                            
+CH2 + H2O+ -> OH + CH3+                                                                             
+CH2 + H3O+ -> H2O + CH3+                                                                            
+CH2 + CO+ -> HCO+ + CH                                                                              
+CH2 + HCO+ -> CO + CH3+                                                                             
+CH2+ + O2 -> HCO+ + OH                                                                              
+CH3+ + O -> HCO+ + H2                                                                               
+O+ + CH4 -> OH + CH3+                                                                               
+O + CH4+ -> OH + CH3+                                                                               
+O+ + OH -> O2+ + H                                                                                  
+O + OH+ -> O2+ + H                                                                                  
+O + CH5+ -> H3O+ + CH2                                                                              
+O + H2O+ -> O2+ + H2                                                                                
+CH4+ + CH4 -> CH5+ + CH3                                                                            
+CH4 + OH+ -> CH5+ + O                                                                               
+CH4 + OH+ -> H3O+ + CH2                                                                             
+CH4+ + H2O -> H3O+ + CH3                                                                            
+CH4 + H2O+ -> H3O+ + CH3                                                                            
+CH4+ + CO -> HCO+ + CH3                                                                             
+CH4 + CO+ -> HCO+ + CH3                                                                             
+OH+ + OH -> H2O+ + O                                                                                
+OH + CH5+ -> H2O+ + CH4                                                                             
+OH+ + H2O -> H3O+ + O                                                                               
+OH + H2O+ -> H3O+ + O                                                                               
+OH+ + CO -> HCO+ + O                                                                                
+OH + CO+ -> HCO+ + O                                                                                
+OH + HCO+ -> CO + H2O+                                                                              
+CH5+ + H2O -> H3O+ + CH4                                                                            
+CH5+ + CO -> HCO+ + CH4                                                                             
+H2O+ + H2O -> H3O+ + OH                                                                             
+H2O+ + CO -> HCO+ + OH                                                                              
+H2O + CO+ -> HCO+ + OH                                                                              
+H2O + HCO+ -> CO + H3O+                                                                             
+H + H2+ -> H2 + H+                                                                                  
+H+ + CH -> CH+ + H                                                                                  
+H+ + CH2 -> CH2+ + H                                                                                
+H+ + CH3 -> CH3+ + H                                                                                
+H+ + CH4 -> CH4+ + H                                                                                
+H+ + OH -> OH+ + H                                                                                  
+H + CO+ -> CO + H+                                                                                  
+H2+ + CH -> CH+ + H2                                                                                
+H2+ + CH2 -> CH2+ + H2                                                                              
+H2+ + CH4 -> CH4+ + H2                                                                              
+H2+ + OH -> OH+ + H2                                                                                
+H2+ + H2O -> H2O+ + H2                                                                              
+H2+ + CO -> CO+ + H2                                                                                
+H2+ + O2 -> O2+ + H2                                                                                
+He+ + CH -> CH+ + He                                                                                
+He+ + CH4 -> CH4+ + He                                                                              
+He+ + H2O -> H2O+ + He                                                                              
+He+ + O2 -> O2+ + He                                                                                
+C+ + CH -> CH+ + C                                                                                  
+C+ + CH2 -> CH2+ + C                                                                                
+C + CO+ -> CO + C+                                                                                  
+C + O2+ -> O2 + C+                                                                                  
+CH + O+ -> O + CH+                                                                                  
+CH + OH+ -> OH + CH+                                                                                
+CH + H2O+ -> H2O + CH+                                                                              
+CH + CO+ -> CO + CH+                                                                                
+CH + O2+ -> O2 + CH+                                                                                
+CH2 + O+ -> O + CH2+                                                                                
+CH2 + OH+ -> OH + CH2+                                                                              
+CH2 + H2O+ -> H2O + CH2+                                                                            
+CH2 + CO+ -> CO + CH2+                                                                              
+CH2 + O2+ -> O2 + CH2+                                                                              
+O+ + CH4 -> CH4+ + O                                                                                
+O+ + OH -> OH+ + O                                                                                  
+O+ + H2O -> H2O+ + O                                                                                
+O + CO+ -> CO + O+                                                                                  
+O+ + O2 -> O2+ + O                                                                                  
+CH4 + CO+ -> CO + CH4+                                                                              
+CH4+ + O2 -> O2+ + CH4                                                                              
+OH+ + H2O -> H2O+ + OH                                                                              
+OH + CO+ -> CO + OH+                                                                                
+OH+ + O2 -> O2+ + OH                                                                                
+H2O + CO+ -> CO + H2O+                                                                              
+H2O+ + O2 -> O2+ + H2O                                                                              
+CO+ + O2 -> O2+ + CO                                                                                
+H+ + E -> H                                                                                         
+He+ + E -> He                                                                                       
+He+ + E -> He                                                                                       
+He++ + E -> He+                                                                                     
+C+ + E -> C                                                                                         
+C++ + E -> C+                                                                                       
+C+++ + E -> C++                                                                                     
+C++++ + E -> C+++                                                                                   
+O+ + E -> O                                                                                         
+O++ + E -> O+                                                                                       
+O+++ + E -> O++                                                                                     
+O++++ + E -> O+++                                                                                   
+H + E -> H+ + E + E                                                                                 
+He + E -> He+ + E + E                                                                               
+He+ + E -> He++ + E + E                                                                             
+C + E -> C+ + E + E                                                                                 
+C+ + E -> C++ + E + E                                                                               
+C++ + E -> C+++ + E + E                                                                             
+C+++ + E -> C++++ + E + E                                                                           
+O + E -> O+ + E + E                                                                                 
+O+ + E -> O++ + E + E                                                                               
+O++ + E -> O+++ + E + E                                                                             
+O+++ + E -> O++++ + E + E                                                                           
+CO -> CO_DUST                                                                                       
+CO_DUST -> CO                                                                                       
+H2O -> H2O_DUST                                                                                     
+H2O_DUST -> H2O                                                                                     
+H -> H+ + E                                                                                         
+He -> He+ + E                                                                                       
+He+ -> He++ + E                                                                                     
+O -> O+ + E                                                                                         
+O+ -> O++ + E                                                                                       
+O++ -> O+++ + E                                                                                     
+O+++ -> O++++ + E                                                                                   
+C -> C+ + E                                                                                         
+C+ -> C++ + E                                                                                       
+C++ -> C+++ + E                                                                                     
+C+++ -> C++++ + E                                                                                   
+H2 -> H + H                                                                                         
+CO -> C + O                                                                                         
+H2+ -> H+ + H                                                                                       
+CH -> CH+ + E                                                                                       
+CH -> C + H                                                                                         
+CH+ -> C+ + H                                                                                       
+CH2 -> CH + H                                                                                       
+CH2+ -> CH+ + H                                                                                     
+CH3 -> CH3+ + E                                                                                     
+CH3 -> CH2 + H                                                                                      
+CH4 -> CH3 + H                                                                                      
+OH -> O + H                                                                                         
+OH+ -> O + H+                                                                                       
+H2O -> OH + H                                                                                       
+H2O -> H2O+ + E                                                                                     
+O2 -> O + O                                                                                         
+O2 -> O2+ + E                                                                                       
+H2 -> H+ + H + E                                                                                    
+H2 -> H + H                                                                                         
+H2 -> H2+ + E                                                                                       
+H -> H+ + E                                                                                         
+He -> He+ + E                                                                                       

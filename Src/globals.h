@@ -97,7 +97,7 @@ int g_dir; /**< Specifies the current sweep or direction of integration.
                 - KDIR, for integration in the X3 dir; */
 
 double g_dt;       /**< The current integration time step. */
-
+double g_mu;
 int    g_intStage;    /**< Gives the current integration stage of the time
                              stepping method (predictor = 0, 1st
                              corrector = 1, and so on). */
